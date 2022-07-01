@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+        <meta name="generator" content="Hugo 0.98.0">
+        <title>LTE-M 매니저</title>
+        <link href="<%= server_url %>/img/amtel_icon.ico" rel="shortcut icon" type="image/x-icon">
+
+        <!-- common css include -->
+        <%- include('../include_css.ejs') %>
+        <!-- Custom styles for this template -->
+        <link href="<%= server_url %>/public/css/contract/lte_contract_list.css" rel="stylesheet">
+
+    <style>
+        .charts{
+            height: 500px;
+        }
+    </style>
+    </head> 
+    <body>
+        <div id="wrapper">
+            <%- include('../nav.ejs') %>
+            <div id="contents_space">
+                <div style="width:40%;float:left;margin-left:5%;height:200px;text-align:center;" class="charts">
+                    <h2 style="text-align: center;">고객 타입</h2>
+                    <canvas id="customer_type_chart" style="width:100%;"></canvas>
+                </div>
+                <div style="width:40%;float:left;margin-left:5%;text-align:center;" class="charts">
+                    <h2 style="text-align: center;">신청 서비스 수</h2>
+                    <canvas id="service_name_chart" width="400" height="200"></canvas>
+                </div>
+                <div style="width:90%;float:left;margin-left:5%;" class="charts">
+                    <h2 style="text-align: center;">월별 계약수</h2>
+                    <canvas id="monthly_contract_chart" style="height:30vh;width:100%"></canvas>
+                </div>
+            </div>
+            <%- include("../footer.ejs") %>
+        </div>
+    </body>
+    
+    <!-- common script include -->
+    <%- include('../include_script.ejs') %>
+
+    <!-- chart js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        $(document).ready( function () {
+            customer_type_get_json();
+            service_name_get_json();
+            monthly_contract_get_json();
+        });
+
+        function customer_type_get_json(){
+            $.ajax({
+                url: "<%= server_url %>/get_customer_type_chart_json_manager",
+                method: "get",
+                dataType: "JSON",
+                success: function(data){
+                        set_customer_type_chart(data);
+                },
+                error: function(err){
+
+                } 
+            });
+        }
+
+        function set_customer_type_chart(data_json){
+            let customer_type_list = [];
+            let customer_type_value_list = [];
+
+            for(var i=0; i<data_json.length; i++){
+                customer_type_list.push(data_json[i].customer_type);
+                customer_type_value_list.push(data_json[i].type_count);
+            }
+
+            const labels = customer_type_list;
+
+            const data = {
+                labels: labels,
+                datasets: [{
+                label: 'My First dataset',
+                backgroundColor: ['red','blue','yellow'],
+                borderColor: 'black',
+                data: customer_type_value_list,
+                fillColor: "#79D1CF",
+                strokeColor: "#79D1CF",
+                }]
+            };
+
+            const config = {
+                type: 'pie',
+                data: data,
+                options: {
+                    responsive: false,
+                }
+            };
+
+            const myChart = new Chart(
+                document.getElementById('customer_type_chart'),
+                config
+            );
+        }
+
+        function service_name_get_json(){
+            $.ajax({
+                url: "<%= server_url %>/get_service_type_chart_json_manager",
+                method: "get",
+                dataType: "JSON",
+                success: function(data){
+                    set_service_name_chart(data);
+                },
+                error: function(err){
+
+                } 
+            });
+        }
+
+        function set_service_name_chart(data_json){
+            let result_datasets = [];
+            let color_set = ["red","orange","yellow","green","blue","navy","violet"];
+            for(var i=0; i<data_json.length; i++){
+                let temp_dataset = {
+                    label: data_json[i].service_name,
+                    backgroundColor: color_set[i],
+                    borderColor: "black",
+                    borderWidth: 2,
+                    data: [data_json[i].service_cnt],
+                }
+                result_datasets.push(temp_dataset);
+            }
+
+            const data =
+                {
+                    labels: ["customer_type"],
+                    datasets: result_datasets,
+                }
+
+            const config = {
+                type: 'bar',
+                data: data,
+                options: {
+                    responsive: false,
+                }
+            };
+
+            const myChart2 = new Chart(
+                document.getElementById('service_name_chart'),
+                config
+            );
+        }
+
+        function monthly_contract_get_json(){
+            $.ajax({
+                url: "<%= server_url %>/get_monthly_contract_chart_json_manager",
+                method: "get",
+                dataType: "JSON",
+                success: function(data){
+                        set_monthly_contract_chart(data);
+                },
+                error: function(err){
+
+                } 
+            });
+        }
+        
+        function set_monthly_contract_chart(data_json){
+            let now_date = new Date();
+            let year = now_date.getFullYear();
+            let month = now_date.getMonth()+1;
+
+            let date_list = [];
+
+            for(var i=5; i>=0; i--){
+                var temp_year = year;
+                var temp_month = month;
+                if((temp_month-i)<1){
+                    temp_year = temp_year-1;
+                    temp_month = 12+(temp_month-i);
+                } else {
+                    temp_month = temp_month-i;
+                }
+                if(temp_month < 10){
+                    temp_month = "0"+temp_month;
+                }
+
+                date_list.push(temp_year+"-"+temp_month);
+            }
+
+            const labels = date_list;
+
+            let data_index=0;
+
+            let chart_data_list = [];
+            for(var i=0; i<date_list.length; i++){
+                if(date_list[i] == data_json[data_index].con_date){
+                    chart_data_list.push(data_json[data_index].con_cnt);
+                    data_index = data_index+1;
+                } else {
+                    chart_data_list.push(0);
+                }
+            }
+
+            const data =
+                {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: "contract_cnt",
+                            backgroundColor: 'red',
+                            borderColor: 'red',
+                            data: chart_data_list,
+                        },
+                    ]
+                }
+
+            const config = {
+                type: 'line',
+                data: data,
+                options: {
+                    responsive: false,
+                }
+            };
+
+            const myChart = new Chart(
+                document.getElementById('monthly_contract_chart'),
+                config
+            );
+        }
+        
+    </script>
+</html>

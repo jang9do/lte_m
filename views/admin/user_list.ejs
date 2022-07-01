@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+        <meta name="generator" content="Hugo 0.98.0">
+        <title>LTE-M 관리자</title>
+        <link href="<%= server_url %>/img/amtel_icon.ico" rel="shortcut icon" type="image/x-icon">
+
+        <!-- common css include -->
+        <%- include('../include_css.ejs') %>
+        <!-- DATA TABLE CSS -->
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css">
+        <!-- Custom styles for this template -->
+        <link href="<%= server_url %>/public/css/contract/lte_contract_list.css" rel="stylesheet">
+
+    </head>
+    <body>
+        <div id="wrapper">
+            <%- include('../nav.ejs') %>
+            <div id="contents_space">
+                <table class="table cell-border" id="main_table" style="width: 100%">
+                    <thead>
+                        <tr>
+                            <th>idx</th>
+                            <th>ID</th>
+                            <th>이름</th>
+                            <th>직급</th>
+                            <th>권한</th>
+                            <th>등록일</th>
+                            <th>reset</th>
+                            <th>상태</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>idx</th>
+                            <th>ID</th>
+                            <th>이름</th>
+                            <th>직급</th>
+                            <th>권한</th>
+                            <th>등록일</th>
+                            <th>reset</th>
+                            <th>상태</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <%- include("../footer.ejs") %>
+        </div>
+    </body>
+    
+    <!-- common script include -->
+    <%- include('../include_script.ejs') %>
+
+    <!-- DATA TABLE JS-->
+    <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+
+    <script>
+        $(document).ready( function () {
+            let url = "<%= server_url %>" + "/get_user_json_list_admin";
+            $('#main_table').DataTable({
+                order: [[0, 'desc']],
+                ordering: true,
+                ajax: {
+                    type : "get",
+                    url : url,
+                },
+                columns: [
+                    { 
+                        data: 'idx',
+                        width: "7%",
+                    },
+                    { 
+                        data: 'user_id' ,
+                        width: "25%",
+                    },
+                    { 
+                        data: 'user_name' ,
+                        width: "15%"
+                    },
+                    { 
+                        data: 'user_position' ,
+                        width: "10%"
+                    },
+                    { 
+                        data: 'user_rank' ,
+                        width: "10%",
+                        render: function(data, type, rows){
+                            if(data==1){
+                                return "<span style='color:red;'>관리자<span>";
+                            } else if(data==2){
+                                return "<span style='color:orange;'>운영자<span>";
+                            } else {
+                                return "<span style='color:blue;'>일반유저<span>";
+                            }
+                        },
+                    },
+                    { 
+                        data: 'regDate' ,
+                        width: "13%"
+                    },
+                    { 
+                        data: 'btn_pw' ,
+                        width: "10%",
+                        render: function(data, type, rows){
+                            return "<a href='<%= server_url %>/user_password_reset?change_user_id="+rows.user_id+"' style='color:green;' onclick='return chk_pw_reset();' >pw_reset</a>";
+                        }
+                    },
+                    { 
+                        data: 'user_status' ,
+                        width: "10%",
+                        render: function(data, type, rows){
+                            if(data==1){
+                                return "<a href='<%=server_url %>/user_status_change?user_idx="+rows.idx+"&user_status=2' onclick='return click_user_disable_change();' style='color:blue;'>활성</a>";
+                            } else {
+                                return "<a href='<%=server_url %>/user_status_change?user_idx="+rows.idx+"&user_status=1' onclick='return click_user_able_change();' style='color:red;'>비활성</a>";
+                            }
+                        },
+                    }
+                ],  
+            });
+        });
+
+        function click_user_disable_change(){
+            let result = confirm("이 계정을 비활성화하시겠습니까?");
+
+            if(result){
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        function click_user_able_change(){
+            let result = confirm("이 계정을 활성화하시겠습니까?");
+
+            if(result){
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        function chk_pw_reset(){
+            return confirm("정말 초기화 하시겠습니까?");
+        }
+    </script>
+</html>

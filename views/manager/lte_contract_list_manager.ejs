@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+        <meta name="generator" content="Hugo 0.98.0">
+        <title>LTE-M 매니저</title>
+        <link href="<%= server_url %>/img/amtel_icon.ico" rel="shortcut icon" type="image/x-icon">
+
+        <!-- common css include -->
+        <%- include('../include_css.ejs') %>
+        <!-- DATA TABLE CSS -->
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css">
+        <!-- Custom styles for this template -->
+        <link href="<%= server_url %>/public/css/contract/lte_contract_list.css" rel="stylesheet">
+        
+
+    </head>
+    <body>
+        <div id="wrapper">
+            <%- include('../nav.ejs') %>
+            <div id="contents_space">
+                <div>
+                    <button id="detail_search_open_Btn" class="btn btn-secondary">상세검색</button>
+                    <table class="table cell-border" id="detail_search" >
+                        <tr>
+                            <th>계약일 범위</th>
+                            <td><input type="date" id="contract_date_start" />&emsp;~&emsp;<input type="date" id="contract_date_end" /></td> 
+                        </tr>
+                        <tr>
+                            <th>고객구분</th>
+                            <td>
+                                <span><input type="radio" name="customer_variation" id="customer_variation_personal" value="개인" />&nbsp;<label for="customer_variation_personal">개인</label></span>
+                                <span><input type="radio" name="customer_variation" id="connect_variation_percomp" value="개인사업자" />&nbsp;<label for="connect_variation_percomp">개인사업자</label></span>
+                                <span><input type="radio" name="customer_variation" id="connect_variation_comp" value="법인" />&nbsp;<label for="connect_variation_comp">법인</label></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>자동납부</th>
+                            <td>
+                                <span><input type="radio" name="auto_payment_chk" id="auto_payment_chk_on" value="ok" />&nbsp;<label for="auto_payment_chk_on">신청</label></span>
+                                <span><input type="radio" name="auto_payment_chk" id="auto_payment_chk_off" value="no" />&nbsp;<label for="auto_payment_chk_off">미신청</label></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>신청 담당자 및 대리점명</th>
+                            <td>
+                                <input type="text" name="sales_people_or_store_name" id="sales_people_or_store_name"  />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="text-align: center;"><button id="detail_search_Btn">검색</button></td>
+                        </tr>
+                    </table>
+                </div>
+                <table class="table cell-border" id="main_table" style="width: 100%">
+                    <thead>
+                        <tr>
+                            <th>idx</th>
+                            <th>고객명</th>
+                            <th>성별</th>
+                            <th>생년월일</th>
+                            <th>전화번호</th>
+                            <th>계약일</th>
+                            <th>신청자</th>
+                            <th>DB등록일</th>
+                            <th>상태</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>idx</th>
+                            <th>고객명</th>
+                            <th>성별</th>
+                            <th>생년월일</th>
+                            <th>전화번호</th>
+                            <th>계약일</th>
+                            <th>신청자</th>
+                            <th>DB등록일</th>
+                            <th>상태</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <%- include("../footer.ejs") %>
+        </div>
+    </body>
+
+    <!-- common script include -->
+    <%- include('../include_script.ejs') %>
+
+    <!-- DATA TABLE JS -->
+    <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+
+    <script>
+        $(document).ready( function () {
+            $('#detail_search').css("display", "none");
+            let url = "<%= server_url %>" + "/get_lte_contract_json_list_manager";
+            get_list(url, get_map());
+        });
+
+        function get_list(url, data){
+            $('#main_table').DataTable({
+                order: [[0, 'desc']],
+                ordering: true,
+                ajax: {
+                    type : "get",
+                    url : url,
+                    data : data,
+                    dataType : "json",
+                },
+                columns: [
+                    { 
+                        data: 'idx',
+                        width: "5%"
+                    },
+                    { 
+                        data: 'customer_name' ,
+                        render: function(data, type, rows){
+                            // return "<a href='"+rows.idx+"' class='tetest'>"+rows.customer_name+"</a>";
+                            return "<a href='./form_show_lte_contract?main_idx="+rows.idx+"' data-id='1'>"+rows.customer_name+"</a>";
+                        },
+                        width: "15%"
+                    },
+                    { 
+                        data: 'gender' ,
+                        width: "8%"
+                    },
+                    { 
+                        data: 'birth' ,
+                        width: "13%"
+                    },
+                    { 
+                        data: 'tel' ,
+                        width: "15%"
+                    },
+                    { 
+                        data: 'real_write_contract_date' ,
+                        width: "13%"
+                    },
+                    { 
+                        data: 'applicant_name' ,
+                        width: "10%"
+                    },
+                    { 
+                        data: 'regDate' ,
+                        width: "13%"
+                    },
+                    { 
+                        data: 'delFlag' ,
+                        width: "8%",
+                        render: function(data, type, rows){
+                            let result;
+                            if(data == 0){
+                                result = "<span style='color:blue;'>유효</span>";
+                            }else{
+                                result = "<span style='color:red;'>삭제</span>";
+                            }
+                            return result;
+                        }
+                    },
+                ],  
+            });
+        }
+
+        $("#detail_search_open_Btn").click(function(){
+            var chk_status = $('#detail_search').css("display");
+            if(chk_status == "none"){
+                $('#detail_search').css("display", "table");
+            } else {
+                $('#detail_search').css("display", "none");
+            }
+        });
+
+        $("#detail_search_Btn").click(function(){
+            let url = "<%= server_url %>" + "/get_lte_contract_json_list_admin";
+            $('#main_table').DataTable().destroy();
+            get_list(url, get_map());
+        })
+
+        function get_map(){
+            var contract_date_start = $("#contract_date_start").val();
+            var contract_date_end = $("#contract_date_end").val();
+            var customer_variation = "";
+            var auto_payment_chk = $("#auto_payment_chk").val();
+            var sales_people_or_store_name = $("#sales_people_or_store_name").val();
+
+            $("input[name='customer_variation']").each(function(idx, item){
+                if($(item).is(":checked")){
+                    customer_variation = $(item).val();
+                }
+            });
+
+            if($("#contract_date_start").val() == ""){
+                contract_date_start = "1900-01-01";
+            }
+            if($("#contract_date_end").val() == ""){
+                contract_date_end = "2999-12-31";
+            } 
+
+            var data = {"contract_date_start": contract_date_start, 
+                        "contract_date_end": contract_date_end,
+                        "customer_variation": customer_variation,
+                        "auto_payment_chk": auto_payment_chk,
+                        "sales_people_or_store_name": sales_people_or_store_name};
+
+            return data;
+        }
+    </script>
+</html>

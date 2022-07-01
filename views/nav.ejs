@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Collapsible sidebar using Bootstrap 4</title>
+
+    <!-- Bootstrap CSS CDN -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    <!-- Our Custom CSS -->
+    <link rel="stylesheet" href="./public/css/nav.css">
+
+    <!-- Font Awesome JS -->
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <!-- topbar-->
+    <div id="header_nav">
+        <div class="dropdown">
+            <button id="login_detail_btn" class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              내 정보
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                <li><a class="dropdown-item" href="#"><%= user_id %></a></li>
+                <li><a class="dropdown-item" href="<%= server_url %>/form_change_password">비밀번호 변경</a></li>
+                <li style="background-color:lightcoral;"><a class="dropdown-item" href="./logout" style="color:white;font-weight:bold;">로그아웃</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="nav_wrapper">
+        <button style="position:absolute;height:40px;left:0;top:0;background-color:#474766;" id="menuBtn" class="btn btn-secondary" >메뉴열기</button>
+        <!-- Sidebar  -->
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h3><img src="<%= server_url %>/img/amtel_logo.png" /></h3>
+            </div>
+
+            <ul class="list-unstyled components">
+                <li id="page_home">
+                    <a href="<%= server_url %>/lte_contract_list" >HOME</a>
+                </li>
+                <li id="page_form_insert_lte_contract" >
+                    <a href="<%= server_url %>/form_insert_lte_contract" >계약서 등록</a>
+                </li>
+                <li id="page_lte_contract_list">
+                    <a href="<%= server_url %>/lte_contract_list">나의 계약서 목록</a>
+                </li>
+
+                <% if(user_rank==2 || user_rank==1) { %>
+                    <li id="page_manager">
+                        <a href="#pageSubmenu_manager" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">운영</a>
+                        <ul class="collapse list-unstyled" id="pageSubmenu_manager">
+                            <li id="page_lte_contract_list_manager">
+                                <a href="<%= server_url %>/lte_contract_list_manager">전체 계약 목록</a>
+                            </li>
+                            <li>
+                                <a href="<%= server_url %>/chart_check">차트 확인</a>
+                            </li>
+                        </ul>
+                    </li>
+                <% } %>
+
+                <% if(user_rank==1) { %>
+                <li id="page_admin">
+                    <a href="#pageSubmenu_admin" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">관리자</a>
+                    <ul class="collapse list-unstyled" id="pageSubmenu_admin">
+                        <li>
+                            <a href="<%= server_url %>/user_list_admin">유저 목록</a>
+                        </li>
+                        <li>
+                            <a href="<%= server_url %>/form_input_user_admin">유저 등록</a>
+                        </li>
+                    </ul>
+                </li>
+                <% } %>
+            </ul>
+            <!--
+            <ul class="list-unstyled CTAs">
+                <li>
+                    <a href="https://bootstrapious.com/tutorial/files/sidebar.zip" class="download">Download source</a>
+                </li>
+                <li>
+                    <a href="https://bootstrapious.com/p/bootstrap-sidebar" class="article">Back to article</a>
+                </li>
+            </ul>
+            -->
+        </nav>
+    </div>
+
+    <!-- jQuery CDN - Slim version (=without AJAX) -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <!-- Popper.JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+
+    <script type="text/javascript">
+        let menuBtn_chk=0;
+        $("#menuBtn").click(function(){
+            if(menuBtn_chk==0){
+                $('#sidebar').css('margin-left', '0');
+                $('#menuBtn').css('margin-left', '250px');
+                menuBtn_chk = 1;
+                $('#menuBtn').html('메뉴닫기');
+            } else {
+                $('#sidebar').css('margin-left', '-250px');
+                $('#menuBtn').css('margin-left', '0');
+                menuBtn_chk = 0;
+                $('#menuBtn').html('메뉴열기');
+            }
+        });
+    </script>
+</body>
+
+</html>

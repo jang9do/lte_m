@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.98.0">
+    <title>LTE-M 로그인</title>
+    <link href="<%= server_url %>/img/amtel_icon.ico" rel="shortcut icon" type="image/x-icon">
+
+    <!-- Custom styles for this template -->
+    <link href="<%=server_url %>/public/css/login/form_login.css" rel="stylesheet">
+
+    <!-- common css include -->
+    <%- include('../include_css.ejs') %>
+
+  </head>
+  <body>
+    <div id="wrapper">
+        <div id="login_box" >
+            <img src="<%= server_url %>/img/amtel.png">
+            <div style="margin:8vh auto;width:80%;">
+                <form action="<%= server_url %>/login" method="post">
+                    <input type="text" placeholder="id를 입력해주세요" name="login_id" id="login_id" />
+                    <input type="password" placeholder="pw를 입력해주세요" name="login_pw" id="login_pw" />
+                    <input type="submit" id="submit_btn" class="btn btn-success" value="로그인" />
+                </form>
+            </div>
+        </div>
+    </div>
+  </body>
+
+  <!-- common script include -->
+  <%- include('../include_script.ejs') %>
+
+  <script>
+  </script>
+</html>

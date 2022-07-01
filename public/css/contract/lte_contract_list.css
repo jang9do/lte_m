@@ -1,0 +1,21 @@
+#main_table_wrapper{
+    width: 100%;
+}
+div.container {
+    width: 100%;
+}
+#main_table{
+    border: 1px solid black;
+}
+#main_table tr th, #main_table tr td{
+    border: none;
+}
+#main_table tr th{
+    background-color: #6d7fcc;
+    color: white;
+    font-weight:normal;
+}
+
+#detail_search_open_Btn {
+    margin-bottom: 3vh;
+}

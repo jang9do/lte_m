@@ -1,0 +1,39 @@
+#login_box{
+    margin:0 auto;
+    width:70vh;
+    min-width:600px;
+    height:60vh;
+    min-height: 600px;
+    padding-top:5vh; 
+    border: 1px solid rgb(168, 166, 166);
+    text-align: center;border-radius:20px;
+}
+
+#input_table{
+    width: 70%;
+    margin: 4vh auto;
+}
+
+#input_table th{
+    width: 15%;
+    font-weight: bold;
+    line-height: 45px;
+}
+
+#input_table td{
+    height: 45px;
+}
+
+#input_table td input{
+    height: 45px;
+    width: 100%;
+}
+
+#submit_btn {
+    width: 70%;
+    height: 45px;
+}
+
+p{
+    width: 100%;
+}

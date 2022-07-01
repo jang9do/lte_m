@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.98.0">
+    <title>LTE-M 관리자</title>
+    <link href="<%= server_url %>/img/amtel_icon.ico" rel="shortcut icon" type="image/x-icon">
+
+    <!-- common css include -->
+    <%- include('../include_css.ejs') %>
+    
+    <!-- Custom styles for this template -->
+    <link href="<%=server_url %>/public/css/admin/input_user_form.css" rel="stylesheet">
+
+  </head>
+  <body>
+    <div id="wrapper">
+        <%- include("../nav.ejs") %>
+        <div id="contents_space">
+          <div id="login_box">
+              <img src="<%= server_url %>/img/amtel.png">
+              <h1 style="margin-top:20px;font-size:3em;font-weight:bold;">유저등록</h1>
+              <div>
+                  <form action="<%= server_url %>/input_user" method="post">
+                    <table id="input_table">
+                      <tr>
+                        <th>id</th>
+                        <td><input type="text" placeholder="id를 입력해주세요" name="user_id" id="user_id" /></td>
+                      </tr>
+                      <tr>
+                        <th>pw</th>
+                        <td><input type="password" placeholder="pw를 입력해주세요" name="user_pw" id="user_pw" /></td>
+                      </tr>
+                      <tr>
+                        <th>이름</th>
+                        <td><input type="text" placeholder="이름를 입력해주세요" name="user_name" id="user_name" /></td>
+                      </tr>
+                      <tr>
+                        <th>직급</th>
+                        <td><input type="text" placeholder="직급를 입력해주세요" name="user_position" id="user_position" /></td>
+                      </tr>
+                    </table>
+                    <p><input type="submit" id="submit_btn" class="btn btn-success" value="등록" /></p>
+                  </form>
+              </div>
+            </div>
+        </div>
+        <%- include("../footer.ejs") %>
+    </div>
+  </body>
+
+  <script src="../public/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../public/js/sidebars.js"></script>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <script>
+  </script>
+</html>
