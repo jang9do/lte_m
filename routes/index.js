@@ -49,6 +49,7 @@ router.get("/get_service_type_chart_json_manager", controller_api.get_service_ty
 router.get("/get_monthly_contract_chart_json_manager", controller_api.get_monthly_contract_chart_json_manager);
 router.get("/download_file", controller_api.download_file);
 router.get("/download_contract_attach_file", controller_api.download_contract_attach_file);
+router.get("/get_auto_complete_list_json", controller_api.get_auto_complete_list_json);
 //api_post
 router.post("/file_upload", upload.array('contract_copy_file'), controller_api.file_upload);
 router.post("/file_upload_update", upload.array('contract_copy_file'), controller_api.file_upload_update);
@@ -73,6 +74,8 @@ router.post("/input_user", controller_admin.input_user);
 
 //manager_get
 router.get("/lte_contract_list_manager", controller_manager.lte_contract_list_manager);
+router.get("/form_insert_auto_complete_list", controller_manager.form_insert_auto_complete_list);
+router.post("/insert_auto_complete_list", controller_manager.insert_auto_complete_list);
 router.get("/chart_check", controller_manager.chart_check);
 
 

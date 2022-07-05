@@ -129,6 +129,7 @@ module.exports = {
 
 
             //get_idx
+            let auto_complete_list_idx = post.auto_complete_rate;
             let c_network_idx = (await mysql_select_query.select_table_get_last_idx('c_network'));
             let terminal_purchase_idx = (await mysql_select_query.select_table_get_last_idx('terminal_purchase'));
             let c_line_useprice_idx = (await mysql_select_query.select_table_get_last_idx('c_line_useprice'));
@@ -139,7 +140,7 @@ module.exports = {
             let other_information_idx = (await mysql_select_query.select_table_get_last_idx('other_information'));
             let applicant_detail_idx = (await mysql_select_query.select_table_get_last_idx('applicant_detail'));
 
-            let result = (await mysql_insert_query.insert_contract_main(c_network_idx, terminal_purchase_idx, c_line_useprice_idx, monthly_price_idx, customer_detail_idx, payment_detail_idx, service_detail_idx, other_information_idx, applicant_detail_idx, attached_file_flag, user_id));
+            let result = (await mysql_insert_query.insert_contract_main(auto_complete_list_idx, c_network_idx, terminal_purchase_idx, c_line_useprice_idx, monthly_price_idx, customer_detail_idx, payment_detail_idx, service_detail_idx, other_information_idx, applicant_detail_idx, attached_file_flag, user_id));
             await mysql_select_query.commit_transaction();
 
             res.redirect(server_url+"/lte_contract_list");
@@ -174,7 +175,7 @@ module.exports = {
             return;
         }
 
-        console.log(post.before_attached_file_idx_list);
+        console.log(post.main_idx);
 
         let bill_type_string = "";
 
@@ -207,6 +208,7 @@ module.exports = {
 
             await mysql_insert_query.insert_contract_log_main(
                 get_idx, 
+                contract_idx_list.auto_complete_list_idx,
                 contract_idx_list.c_network_idx, 
                 contract_idx_list.terminal_purchase_idx, 
                 contract_idx_list.c_line_usePrice_idx, 
@@ -282,6 +284,7 @@ module.exports = {
 
 
             //get_idx
+            let auto_complete_list_idx = post.auto_complete_rate;
             let c_network_idx = (await mysql_select_query.select_table_get_last_idx('c_network'));
             let terminal_purchase_idx = (await mysql_select_query.select_table_get_last_idx('terminal_purchase'));
             let c_line_useprice_idx = (await mysql_select_query.select_table_get_last_idx('c_line_useprice'));
@@ -292,7 +295,7 @@ module.exports = {
             let other_information_idx = (await mysql_select_query.select_table_get_last_idx('other_information'));
             let applicant_detail_idx = (await mysql_select_query.select_table_get_last_idx('applicant_detail'));
 
-            await mysql_updel_query.update_contract_main(c_network_idx, terminal_purchase_idx, c_line_useprice_idx, monthly_price_idx, customer_detail_idx, payment_detail_idx, service_detail_idx, other_information_idx, applicant_detail_idx, attached_file_flag, contract_idx_list.create_user, user_id, get_idx);
+            await mysql_updel_query.update_contract_main(auto_complete_list_idx, c_network_idx, terminal_purchase_idx, c_line_useprice_idx, monthly_price_idx, customer_detail_idx, payment_detail_idx, service_detail_idx, other_information_idx, applicant_detail_idx, attached_file_flag, contract_idx_list.create_user, user_id, get_idx);
             await mysql_select_query.commit_transaction();
 
             console.log(server_url);

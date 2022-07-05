@@ -25,6 +25,14 @@
           <input type="hidden" name="before_attached_file_idx_list" id="before_attached_file_idx_list" value="" />
           <table id="top_table" class="table table-bordered ">
             <tr>
+              <th>자동완성</th>
+              <td colspan="3">
+                <select name="auto_complete_rate" id="auto_complete_rate" class="full_space_inputbox" >
+                  <option value="0">기존 요금제에서 선택하실 경우 선택</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
               <th>통신망</th>
               <td>
                 <span><input type="radio" name="tel_comp" id="tel_comp_SKT" value="SKT" />&nbsp;<label for="tel_comp_SKT">SKT</label></span>
@@ -340,11 +348,13 @@
   <%- include('../include_script.ejs') %>
 
   <script>
+    let auto_complete_list;
     window.onload = function(){
       $('input').attr('autocomplete','off');
       auto_payment_chk();
       data_input();
       new_upload_chk();
+      auto_complete_rate_insert();
 
       var file_idx_list = '<% attached_file_data.forEach(function(row) { %><%= row.idx %>'+ ',' +'<% }) %>';
       file_idx_list = file_idx_list.substring(0, file_idx_list.length -1);
@@ -525,6 +535,52 @@
         $('#chooseFile').attr("checked",false);
       }
     }
+
+    function auto_complete_rate_insert(){
+      $.ajax({
+          type: "GET",
+          url: '<%= server_url %>/get_auto_complete_list_json',
+          dataType: "JSON",
+          success: function (result) {
+            for(var key in result){
+              let rate_line;
+              if(result[key].idx == Number('<%= contract_idx_list.auto_complete_list_idx %>')){
+                rate_line = "<option value='" + result[key].idx + "' selected='selected'>" + result[key].list_name + "</option>";
+              } else {
+                rate_line = "<option value='" + result[key].idx + "'>" + result[key].list_name + "</option>";
+              }
+              $('#auto_complete_rate').append(rate_line);
+            }
+
+            auto_complete_list = result;
+          },
+          error: function(err){
+            console.log(err);
+          }
+      });
+    }
+
+    $('#auto_complete_rate').change(function(){
+      let list_idx = $('#auto_complete_rate').val();
+
+      let key_list;
+      let value_list;
+
+      for(var key in auto_complete_list){
+        if(auto_complete_list[key].idx == list_idx){
+          key_list = Object.keys(auto_complete_list[key]);
+          value_list = Object.values(auto_complete_list[key]);
+          $('input[name="table_second_price_model_name"]').val(auto_complete_list[key].plan_name);
+          $('input:radio[name="join_service_variation"][value="' + auto_complete_list[key].plan_name + '"]').attr("checked", true);
+
+          break;
+        }
+      }
+
+      for(var i=0; i<key_list.length; i++){
+        $('input[name="'+key_list[i]+'"').val(value_list[i]);
+      }
+    });
     
     $('input').keydown(function() {
       if (event.keyCode === 13) {

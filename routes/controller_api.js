@@ -8,6 +8,7 @@ const exceljs = require("exceljs");
 const fs = require("fs");
 const { render } = require("ejs");
 const e = require("express");
+const { select_applicant_detail_detail } = require("../models/mysql_select_query.js");
 const server_url = process.env.SERVER_HOST+":"+process.env.SERVER_PORT;
 
 module.exports = {
@@ -216,6 +217,19 @@ module.exports = {
         let sql_array = (await mysql_select_query.select_monthly_contract_chart());
 
         res.send(sql_array);
+    },
+
+    get_auto_complete_list_json: async function(req, res){
+        // login_chk
+        let login_chk = permission_chk.login_check(req);
+        if(login_chk != true){
+            res.redirect(server_url+login_chk);
+            return;
+        }
+
+        let json_list = JSON.parse(await mysql_select_query.select_auto_complete_list());
+
+        res.send(json_list);
     },
     
     excel_json : async function(req, res){

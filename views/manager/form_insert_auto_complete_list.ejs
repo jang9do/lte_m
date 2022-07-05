@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.98.0">
+    <title>자동완성 등록</title>
+    <link href="<%= server_url %>/img/amtel_icon.ico" rel="shortcut icon" type="image/x-icon">
+
+    <!-- common css include -->
+    <%- include('../include_css.ejs') %>
+
+    <!-- Custom styles for this template -->
+    <link href="<%= server_url %>/public/css/contract/insert_contract.css" rel="stylesheet">
+  </head>
+  <body>
+    <div id="wrapper">
+      <%- include('../nav.ejs') %>
+      <div id="contents_space">
+        <h2>
+          <img src="<%= server_url %>/img/amtel.png" style="height:80px;" /> 자동완성 등록
+        </h2>
+        
+        <form action="<%= server_url %>/insert_auto_complete_list" method="post" id="main_form" onsubmit="return before_onsubmit();" accept-charset="utf-8">
+          <table id="top_table" class="table table-bordered ">
+            <tr>
+              <th>등록명</th>
+              <td>
+                <input type="text" name="list_name" id="list_name" class="full_space_inputbox" style="width:100%;" />
+              </td>
+            </tr>
+            <tr>
+              <th>상품명</th>
+              <td>
+                <input type="text" name="plan_name" id="plan_name" class="full_space_inputbox" style="width:100%;" />
+              </td>
+            </tr>
+            <tr>
+              <th>할부 (개월)</th>
+              <td>
+                <input type="number" name="installments" id="installments" class="full_space_inputbox" style="width:100%;" />
+              </td>
+            </tr>
+            <tr>
+              <th>출고가</th>
+              <td>
+                <input type="number" name="table_second_startPrice" id="table_second_startPrice" class="full_space_inputbox" style="width:100%;" />
+              </td>
+            </tr>
+            <tr>
+              <th>지원금</th>
+              <td>
+                <input type="number" name="table_second_supportPrice" id="table_second_supportPrice" class="full_space_inputbox" style="width:100%;" />
+              </td>
+            </tr>
+            <tr>
+              <th>할부원금</th>
+              <td>
+                <input type="number" name="table_second_installments_origin" id="table_second_installments_origin" class="full_space_inputbox" style="width:100%;" />
+              </td>
+            </tr>
+            <tr>
+              <th>월 정액요금</th>
+              <td>
+                <input type="number" name="table_second_nomalPrice" id="table_second_nomalPrice" class="full_space_inputbox" style="width:100%;" />
+              </td>
+            </tr>
+            <tr>
+              <th>월 요금할인</th>
+              <td>
+                <input type="number" name="table_second_discount" id="table_second_discount" class="full_space_inputbox" style="width:100%;" />
+              </td>
+            </tr>
+            <tr>
+              <th>월 납부액</th>
+              <td>
+                <input type="number" name="table_second_monthPrice" id="table_second_monthPrice" class="full_space_inputbox" style="width:100%;" />
+              </td>
+            </tr>
+            <tr>
+              <th>월 총 납부액</th>
+              <td>
+                <input type="number" name="table_second_total_monthlyPrice" id="table_second_total_monthlyPrice" class="full_space_inputbox" style="width:100%;" />
+              </td>
+            </tr>
+          </table>
+          <p style="text-align:center;margin-top:50px;"><input type="submit" class="btn btn-primary" style="width:100px;height:50px;margin-top:20px;" value="등록" ></p>
+        </form>
+      </div>
+      <%- include("../footer.ejs") %>
+    </div>
+  </body>
+
+  <!-- common script include -->
+  <%- include('../include_script.ejs') %>
+
+  <script>
+    window.onload = function(){
+      $('input').attr('autocomplete','off');
+    }
+
+    $('input').keydown(function() {
+      if (event.keyCode === 13) {
+        event.preventDefault();
+      };
+    });
+  </script>
+</html>

@@ -15,11 +15,11 @@ module.exports = {
             })
         })
     },
-    insert_contract_main: function(c_network_detail_idx, terminal_purchase_idx, c_line_usePrice_idx, monthly_price_idx, customer_detail_idx, payment_detail_idx, service_detail_idx, other_information_idx, applicant_detail_idx, attached_file_flag, user_id){
+    insert_contract_main: function(auto_complete_list_idx, c_network_detail_idx, terminal_purchase_idx, c_line_usePrice_idx, monthly_price_idx, customer_detail_idx, payment_detail_idx, service_detail_idx, other_information_idx, applicant_detail_idx, attached_file_flag, user_id){
         return new Promise (function(response, reject){
-            let sql = 'INSERT INTO `'+process.env.MYSQL_DATABASE+'`.`contract`(`c_network_idx`,`terminal_purchase_idx`,`c_line_usePrice_idx`,`monthly_price_idx`,`customer_detail_idx`,`payment_detail_idx`,`service_detail_idx`,`other_information_idx`,`applicant_detail_idx`,`attached_file_flag`,`create_user`) ';
-            sql = sql + 'VALUES(? ,? ,? ,? ,? ,? ,? ,? ,? ,?, ?)';
-            let params = [c_network_detail_idx, terminal_purchase_idx, c_line_usePrice_idx, monthly_price_idx, customer_detail_idx, payment_detail_idx, service_detail_idx, other_information_idx, applicant_detail_idx, attached_file_flag, user_id];
+            let sql = 'INSERT INTO `'+process.env.MYSQL_DATABASE+'`.`contract`(`auto_complete_list_idx`,`c_network_idx`,`terminal_purchase_idx`,`c_line_usePrice_idx`,`monthly_price_idx`,`customer_detail_idx`,`payment_detail_idx`,`service_detail_idx`,`other_information_idx`,`applicant_detail_idx`,`attached_file_flag`,`create_user`) ';
+            sql = sql + 'VALUES(?, ? ,? ,? ,? ,? ,? ,? ,? ,? ,?, ?)';
+            let params = [auto_complete_list_idx, c_network_detail_idx, terminal_purchase_idx, c_line_usePrice_idx, monthly_price_idx, customer_detail_idx, payment_detail_idx, service_detail_idx, other_information_idx, applicant_detail_idx, attached_file_flag, user_id];
             mysqlConn.query(sql, params,function(err, data){
                 if(!err){
                     response('OK');
@@ -30,11 +30,11 @@ module.exports = {
             })
         })
     },
-    insert_contract_log_main: function(origin_idx, c_network_detail_idx, terminal_purchase_idx, c_line_usePrice_idx, monthly_price_idx, customer_detail_idx, payment_detail_idx, service_detail_idx, other_information_idx, applicant_detail_idx, attached_file_flag, attached_file_idx_list, create_user_id, modify_user, origin_modDate){
+    insert_contract_log_main: function(origin_idx, auto_complete_list_idx, c_network_detail_idx, terminal_purchase_idx, c_line_usePrice_idx, monthly_price_idx, customer_detail_idx, payment_detail_idx, service_detail_idx, other_information_idx, applicant_detail_idx, attached_file_flag, attached_file_idx_list, create_user_id, modify_user, origin_modDate){
         return new Promise (function(response, reject){
-            let sql = 'INSERT INTO `'+process.env.MYSQL_DATABASE+'`.`contract_before_log`(`origin_idx`,`c_network_idx`,`terminal_purchase_idx`,`c_line_usePrice_idx`,`monthly_price_idx`,`customer_detail_idx`,`payment_detail_idx`,`service_detail_idx`,`other_information_idx`,`applicant_detail_idx`,`attached_file_flag`,`attached_file_idx_list`,`create_user`,`modify_user`,`origin_modDate`) ';
-            sql = sql + 'VALUES(? ,? ,? ,? ,? ,? ,? ,? ,?, ?, ?, ?, ?, ? ,?)';
-            let params = [origin_idx, c_network_detail_idx, terminal_purchase_idx, c_line_usePrice_idx, monthly_price_idx, customer_detail_idx, payment_detail_idx, service_detail_idx, other_information_idx, applicant_detail_idx, attached_file_flag, attached_file_idx_list, create_user_id, modify_user, origin_modDate];
+            let sql = 'INSERT INTO `'+process.env.MYSQL_DATABASE+'`.`contract_before_log`(`origin_idx`,`auto_complete_list_idx`,`c_network_idx`,`terminal_purchase_idx`,`c_line_usePrice_idx`,`monthly_price_idx`,`customer_detail_idx`,`payment_detail_idx`,`service_detail_idx`,`other_information_idx`,`applicant_detail_idx`,`attached_file_flag`,`attached_file_idx_list`,`create_user`,`modify_user`,`origin_modDate`) ';
+            sql = sql + 'VALUES(? ,? ,? ,? ,? ,? ,? ,? ,?, ?, ?, ?, ?, ? ,?, ?)';
+            let params = [origin_idx, auto_complete_list_idx, c_network_detail_idx, terminal_purchase_idx, c_line_usePrice_idx, monthly_price_idx, customer_detail_idx, payment_detail_idx, service_detail_idx, other_information_idx, applicant_detail_idx, attached_file_flag, attached_file_idx_list, create_user_id, modify_user, origin_modDate];
             mysqlConn.query(sql, params,function(err, data){
                 if(!err){
                     response('OK');
@@ -279,6 +279,22 @@ module.exports = {
         return new Promise (function(response, reject){
             let sql = 'INSERT INTO `'+process.env.MYSQL_DATABASE+'`.`user_pw_key`(`user_idx`,`user_key`,`encording_valiable`) VALUES(?, ?, ?)';
             let params = [user_idx, salt, encording_variable];
+            
+            mysqlConn.query(sql, params, function(err,data){
+                if(!err){
+                    response('OK');
+                } else {
+                    console.log("fail?");
+                    reject(err);
+                }
+            });
+        })
+    },
+    insert_auto_complete_list: function(list_name, plan_name, installments, table_second_startPrice, table_second_supportPrice, table_second_installments_origin, table_second_nomalPrice, table_second_discount, table_second_monthPrice, table_second_total_monthlyPrice){
+        return new Promise (function(response, reject){
+            let sql = 'INSERT INTO `'+process.env.MYSQL_DATABASE+'`.`auto_complete_list`(`list_name`,`plan_name`,`installments`,`table_second_startPrice`,`table_second_supportPrice`,`table_second_installments_origin`,`table_second_nomalPrice`,`table_second_discount`,`table_second_monthPrice`,`table_second_total_monthlyPrice`) ';
+            sql = sql + 'VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+            let params = [list_name, plan_name, installments, table_second_startPrice, table_second_supportPrice, table_second_installments_origin, table_second_nomalPrice, table_second_discount, table_second_monthPrice, table_second_total_monthlyPrice];
             
             mysqlConn.query(sql, params, function(err,data){
                 if(!err){

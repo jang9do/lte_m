@@ -43,6 +43,12 @@
         </h2>
           <table id="top_table" class="table table-bordered ">
             <tr>
+              <th>자동완성</th>
+              <td colspan="3">
+                <input type="text" class="full_space_inputbox" name="auto_complete_rate" id="auto_complete_rate" />
+              </td>
+            </tr>
+            <tr>
               <th>통신망</th>
               <td>
                 <input type="text" class="full_space_inputbox" value="<%= c_network_data[0].network %>" />
@@ -337,6 +343,7 @@
       $('input').attr('disabled','on');
       bill_variation_chk();
       auto_payment_chk();
+      auto_complete_rate_insert();
     }
 
     function bill_variation_chk(){
@@ -400,5 +407,27 @@
         location.replace("<%= server_url %>/recovery_lte_contract?main_idx=<%= main_idx %>");
       }
     });
+
+    function auto_complete_rate_insert(){
+      $.ajax({
+          type: "GET",
+          url: '<%= server_url %>/get_auto_complete_list_json',
+          dataType: "JSON",
+          success: function (result) {
+            for(var key in result){
+              if(Number('<%= contract_idx_list.auto_complete_list_idx %>') == 0){
+                $('input[name="auto_complete_rate"]').val("");
+                break;
+              } else if(Number(result[key].idx) == Number('<%= contract_idx_list.auto_complete_list_idx %>')){
+                $('input[name="auto_complete_rate"]').val(result[key].list_name);
+                break;
+              }
+            };
+          },
+          error: function(err){
+            console.log(err);
+          }
+      });
+    }
   </script>
 </html>

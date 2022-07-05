@@ -148,7 +148,7 @@ module.exports = {
     
     select_get_contract_all_idx: function(idx){
         return new Promise (function(response, reject){
-            let sql = 'SELECT c_network_idx, terminal_purchase_idx, c_line_usePrice_idx, monthly_price_idx, customer_detail_idx, payment_detail_idx, service_detail_idx, other_information_idx, applicant_detail_idx, attached_file_flag, create_user, modify_user, regDate, modDate, contract_status, delFlag ';
+            let sql = 'SELECT auto_complete_list_idx, c_network_idx, terminal_purchase_idx, c_line_usePrice_idx, monthly_price_idx, customer_detail_idx, payment_detail_idx, service_detail_idx, other_information_idx, applicant_detail_idx, attached_file_flag, create_user, modify_user, regDate, modDate, contract_status, delFlag ';
             sql = sql + 'FROM '+process.env.MYSQL_DATABASE+'.contract WHERE idx=?';
             let params = [idx];
 
@@ -412,7 +412,7 @@ module.exports = {
 
     select_get_before_contract_all_idx: function(before_idx){
         return new Promise (function(response, reject){
-            let sql = 'SELECT idx, c_network_idx, terminal_purchase_idx, c_line_usePrice_idx, monthly_price_idx, customer_detail_idx, payment_detail_idx, service_detail_idx, other_information_idx, applicant_detail_idx, attached_file_flag, attached_file_idx_list, create_user, IF(modify_user IS NULL, create_user, modify_user) modify_user, regDate, DATE_FORMAT(origin_modDate, "%Y-%m-%d %H:%i") origin_modDate, contract_status ';
+            let sql = 'SELECT idx, auto_complete_list_idx, c_network_idx, terminal_purchase_idx, c_line_usePrice_idx, monthly_price_idx, customer_detail_idx, payment_detail_idx, service_detail_idx, other_information_idx, applicant_detail_idx, attached_file_flag, attached_file_idx_list, create_user, IF(modify_user IS NULL, create_user, modify_user) modify_user, regDate, DATE_FORMAT(origin_modDate, "%Y-%m-%d %H:%i") origin_modDate, contract_status ';
             sql = sql + 'FROM '+process.env.MYSQL_DATABASE+'.contract_before_log WHERE idx=?';
             let params = [before_idx];
 
@@ -536,6 +536,23 @@ module.exports = {
                 }
             });
         })
+    }, 
+
+    select_auto_complete_list: function(){
+        return new Promise (function(response, reject){
+            let sql = 'SELECT idx, list_name, plan_name, installments, table_second_startPrice, table_second_supportPrice, table_second_installments_origin, table_second_nomalPrice, table_second_discount, table_second_monthPrice, table_second_total_monthlyPrice ';
+            sql = sql + 'FROM '+process.env.MYSQL_DATABASE+'.auto_complete_list WHERE delFlag=0';
+            
+            mysqlConn.query(sql, function(err, data){
+                if(!err){
+                    response(JSON.stringify(data));
+                } else {
+                    console.log("fail?");
+                    reject(err);
+                }
+            });
+        })
     }
+
 
 }

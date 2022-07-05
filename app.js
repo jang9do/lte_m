@@ -46,8 +46,6 @@ app.use(
 app.use(routes);
 app.use("/public",express.static(process.env.LOCAL_DIR+"/public"));
 app.use("/img",express.static(process.env.LOCAL_DIR+"/img"));
-app.use("/files",express.static(process.env.LOCAL_DIR+"/files"));
-app.use("/excel",express.static(process.env.LOCAL_DIR+"/excel"));
 
 console.log();
 

@@ -196,10 +196,15 @@
 
             let chart_data_list = [];
             for(var i=0; i<date_list.length; i++){
-                if(date_list[i] == data_json[data_index].con_date){
-                    chart_data_list.push(data_json[data_index].con_cnt);
-                    data_index = data_index+1;
-                } else {
+                if(data_json.length > data_index){
+                    if(date_list[i] == data_json[data_index].con_date){
+                        console.log(data_json.length+","+data_index);
+                        chart_data_list.push(data_json[data_index].con_cnt);
+                        data_index = data_index+1;
+                    } else {
+                        chart_data_list.push(0);
+                    }
+                }else {
                     chart_data_list.push(0);
                 }
             }
