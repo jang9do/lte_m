@@ -12,9 +12,9 @@ const corsOptions = {
 const express = require('express');
 const session = require('express-session');
 const mysql_session = require('express-mysql-session');
+const logger = require('morgan');
 const app = express();
 
-const server = http.createServer(app);
 const routes = require("./routes/");
 require('dotenv').config();
 
@@ -43,10 +43,27 @@ app.use(
         rolling : true,
     })
 );
+app.use(logger('dev'));
 app.use(routes);
 app.use("/public",express.static(process.env.LOCAL_DIR+"/public"));
 app.use("/img",express.static(process.env.LOCAL_DIR+"/img"));
 
-console.log();
 
-server.listen(8080,'0.0.0.0');
+
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+    next(createError(404));
+});
+
+// error handler
+    app.use(function(err, req, res, next) {
+    // set locals, only providing error in development
+    res.locals.message = err.message;
+    res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+    // render the error page
+    res.status(err.status || 500);
+    res.render('error');
+});
+
+module.exports = app;
