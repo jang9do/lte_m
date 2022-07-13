@@ -3,9 +3,7 @@ const mysql_select_query = require("../models/mysql_select_query.js");
 const mysql_updel_query = require("../models/mysql_updel_query.js");
 const permission_chk = require("../models/permission_chk.js");
 require('dotenv').config();
-const qs = require('querystring');
 const crypto = require('crypto');
-const { render } = require("ejs");
 const server_url = process.env.SERVER_HOST+":"+process.env.SERVER_PORT;
 
 // 암호화 메서드
@@ -45,7 +43,7 @@ module.exports = {
             return;
         }
 
-        res.render("../views/admin/input_user.ejs", {result: result, server_url: server_url, page_name: 'form_input_user_admin', user_id: req.session.user_id, user_rank: req.session.user_rank});
+        res.render("admin/input_user", {result: result, server_url: server_url, page_name: 'form_input_user_admin', user_id: req.session.user_id, user_rank: req.session.user_rank});
     },
     input_user : async function(req, res){
         let result = "";
@@ -128,7 +126,7 @@ module.exports = {
             return;
         }
 
-        res.render('../views/admin/user_list.ejs',{result: result, server_url: server_url, page_name: 'user_list_admin', user_id: req.session.user_id, user_rank: req.session.user_rank});
+        res.render('admin/user_list',{result: result, server_url: server_url, page_name: 'user_list_admin', user_id: req.session.user_id, user_rank: req.session.user_rank});
     },
     user_status_change: async function(req, res){
         let user_status = req.query.user_status;

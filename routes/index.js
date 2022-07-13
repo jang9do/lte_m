@@ -83,5 +83,6 @@ router.get("/chart_check", controller_manager.chart_check);
 router.get("/", controller_main.main);
 router.get("/main", controller_main.main);
 router.get("/curl_test", controller_main.curl_test);
+router.get("/insert_form_test", controller_main.insert_form_test);
 
 module.exports = router;

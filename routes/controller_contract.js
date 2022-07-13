@@ -4,7 +4,6 @@ const mysql_updel_query = require("../models/mysql_updel_query.js");
 const permission_chk = require("../models/permission_chk.js");
 require('dotenv').config();
 const crypto = require('crypto');
-const { render } = require("ejs");
 const server_url = process.env.SERVER_HOST+":"+process.env.SERVER_PORT;
 
 // 암호화 메서드
@@ -36,7 +35,7 @@ module.exports = {
             res.redirect(server_url+login_chk);
             return;
         }
-        res.render("../views/contract/form_insert_lte_contract.ejs", {server_url: server_url, page_name: 'form_insert_lte_contract', user_rank: req.session.user_rank, user_id: req.session.user_id});
+        res.render("contract/form_insert_lte_contract", {server_url: server_url, page_name: 'form_insert_lte_contract', user_rank: req.session.user_rank, user_id: req.session.user_id});
     },
 
     insert_lte_contract : async function(req, res){
@@ -315,7 +314,7 @@ module.exports = {
             res.redirect(server_url+login_chk);
             return;
         }
-        res.render("../views/contract/lte_contract_list.ejs", {server_url: server_url, page_name: 'lte_contract_list', user_rank: req.session.user_rank, user_id: req.session.user_id});
+        res.render("contract/lte_contract_list", {server_url: server_url, page_name: 'lte_contract_list', user_rank: req.session.user_rank, user_id: req.session.user_id});
     },
 
     form_show_lte_contract: async function(req, res){
@@ -356,7 +355,7 @@ module.exports = {
             let applicant_detail_data = await mysql_select_query.select_applicant_detail_detail(contract_idx_list.applicant_detail_idx);
             let attached_file_data = await mysql_select_query.select_attached_file_detail(main_idx);
 
-            res.render("../views/contract/form_show_lte_contract.ejs", {
+            res.render("contract/form_show_lte_contract", {
                 server_url: server_url, 
                 page_name: 'form_show_lte_contract', 
                 contract_idx_list: contract_idx_list,
@@ -420,7 +419,7 @@ module.exports = {
             let applicant_detail_data = await mysql_select_query.select_applicant_detail_detail(contract_before_idx_list.applicant_detail_idx);
             let attached_file_data = await mysql_select_query.select_before_attached_file_detail(contract_before_idx_list.attached_file_idx_list);
 
-            res.render("../views/contract/form_show_before_lte_contract.ejs", {
+            res.render("contract/form_show_before_lte_contract", {
                 server_url: server_url, 
                 page_name: 'form_show_before_lte_contract', 
                 contract_before_idx_list: contract_before_idx_list,
@@ -482,7 +481,7 @@ module.exports = {
             let applicant_detail_data = await mysql_select_query.select_applicant_detail_detail(contract_idx_list.applicant_detail_idx);
             let attached_file_data = await mysql_select_query.select_attached_file_detail(main_idx);
 
-            res.render("../views/contract/form_modify_lte_contract.ejs", {
+            res.render("contract/form_modify_lte_contract", {
                 server_url: server_url, 
                 page_name: 'form_modify_lte_contract', 
                 main_idx: main_idx, 
@@ -502,7 +501,7 @@ module.exports = {
             });
         } catch(err){
             console.log(err);
-            res.render("../views/contract/form_modify_lte_contract.ejs", {server_url: server_url, page_name: 'form_modify_lte_contract', user_rank: req.session.user_rank, user_id: req.session.user_id});
+            res.render("contract/form_modify_lte_contract", {server_url: server_url, page_name: 'form_modify_lte_contract', user_rank: req.session.user_rank, user_id: req.session.user_id});
         }
     },
 

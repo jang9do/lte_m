@@ -3,12 +3,8 @@ const mysql_select_query = require("../models/mysql_select_query.js");
 const mysql_updel_query = require("../models/mysql_updel_query.js");
 const permission_chk = require("../models/permission_chk.js");
 require('dotenv').config();
-const qs = require('querystring');
 const exceljs = require("exceljs");
 const fs = require("fs");
-const { render } = require("ejs");
-const e = require("express");
-const { select_applicant_detail_detail } = require("../models/mysql_select_query.js");
 const server_url = process.env.SERVER_HOST+":"+process.env.SERVER_PORT;
 
 module.exports = {

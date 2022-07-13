@@ -3,10 +3,7 @@ const mysql_select_query = require("../models/mysql_select_query.js");
 const mysql_updel_query = require("../models/mysql_updel_query.js");
 const permission_chk = require("../models/permission_chk.js");
 require('dotenv').config();
-const qs = require('querystring');
-const { rollback_transaction } = require("../models/mysql_select_query.js");
 const crypto = require('crypto');
-const { send } = require("process");
 const server_url = process.env.SERVER_HOST+":"+process.env.SERVER_PORT;
 
 module.exports = {
@@ -47,7 +44,7 @@ module.exports = {
             }
 
         } catch(err) {
-            res.render("../views/login/login.ejs", {result: result, server_url: server_url, page_name: 'login'});
+            res.render("login/login", {result: result, server_url: server_url, page_name: 'login'});
             res.send(result);
         }
     },
@@ -66,7 +63,7 @@ module.exports = {
 
     form_login: async function(req, res){
         let result = "";
-        res.render("../views/login/login.ejs", {result: result, server_url: server_url, page_name: 'form_login'});
+        res.render("login/login", {result: result, server_url: server_url, page_name: 'form_login'});
     },
 
     change_password: async function(req, res){
@@ -157,6 +154,6 @@ module.exports = {
         }
 
         let result = "";
-        res.render("../views/login/form_change_password.ejs", {result: result, server_url: server_url, page_name: 'form_change_password', user_id: req.session.user_id, user_rank: req.session.user_rank})
+        res.render("login/form_change_password", {result: result, server_url: server_url, page_name: 'form_change_password', user_id: req.session.user_id, user_rank: req.session.user_rank})
     }
 }
