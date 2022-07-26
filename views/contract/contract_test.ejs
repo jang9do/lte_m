@@ -1,0 +1,620 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.98.0">
+    <title>LTE-M 계약 등록</title>
+    <link href="<%= server_url %>/img/amtel_icon.ico" rel="shortcut icon" type="image/x-icon">
+
+    <!-- common css include -->
+    <%- include('../include_css.ejs') %>
+
+    <!-- Custom styles for this template -->
+    <link href="<%= server_url %>/public/css/contract/insert_contract_v2.css" rel="stylesheet">
+  </head>
+  <body>
+    <div id="wrapper">
+      <%- include('../nav.ejs') %>
+      <div id="contents_space">
+        <h2>
+          <img src="<%= server_url %>/img/amtel.png" style="height:80px;" />이동통신(M2M)서비스 가입신청서</span>
+        </h2>
+        <h3>
+          <form method="post" id="excel_form" style="float:right;">
+            <input type="file" name="excel_file" id="excel_file" style="display:none;" />
+            <label for="excel_file" class="btn btn-secondary">엑셀 Import</label>
+          </form>
+          <a href="<%= server_url %>/download_file?folder=excel&file_name=form_contract_insert.xlsx" class="btn btn-success" style="float:right;margin-right:10px;" >엑셀폼 다운로드</a>
+        </h3>
+        
+        <form action="<%= server_url %>/insert_lte_contract" method="post" id="main_form" onsubmit="return before_onsubmit();" accept-charset="utf-8">
+          <table id="top_table" class="table table-bordered first_table">
+            <tr>
+              <th>계약구분</th>
+              <td>
+                <span><input type="radio" name="contact_variation" id="contact_variation_first" value="최초"  />&nbsp;<label for="contact_variation_first">최초</label></span>
+              </td>
+            </tr>
+            <tr>
+              <th>개통방법</th>
+              <td>
+                <span><input type="radio" name="connect_variation" id="connect_variation" value="단말개통" />&nbsp;<label for="connect_variation">단말개통</label></span>
+              </td>
+            </tr>
+            <tr>
+              <th>고객구분</th>
+              <td>
+                <span><input type="radio" name="customer_variation" id="customer_variation_personal" value="개인" />&nbsp;<label for="customer_variation_personal">개인</label></span>
+                <span><input type="radio" name="customer_variation" id="connect_variation_percomp" value="개인사업자" />&nbsp;<label for="connect_variation_percomp">개인사업자</label></span>
+                <span><input type="radio" name="customer_variation" id="connect_variation_comp" value="법인" />&nbsp;<label for="connect_variation_comp">법인</label></span>
+              </td>
+            </tr>
+            <tr>
+              <th>요금제 선택</th>
+              <td colspan="3">
+                <select name="auto_complete_rate" id="auto_complete_rate" class="full_space_inputbox" >
+                  <option value="0">기존 요금제에서 선택하실 경우 선택</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <th>약정기간 (개월)</th>
+              <td>
+                <select name="installments" class="full_space_inputbox" >
+                  <option>6</option>
+                  <option>12</option>
+                  <option>18</option>
+                  <option>24</option>
+                  <option>30</option>
+                  <option>36</option>
+                  <option>42</option>
+                  <option>48</option>
+                  <option>54</option>
+                  <option>60</option>
+                </select> 
+              </td>
+            </tr>
+          </table>
+
+          <table class="table table-bordered table_second" style="float:left;width:42%;">
+            <tr>
+              <th colspan="2" class="tableTitle"><span class="float_left">가. 단말기 비용</span></th>
+            </tr>
+            <tr>
+              <th>출 고 가</th>
+              <td><input type="text" class="money_input float_left" name="table_second_startPrice" style="width:70%;"><span class="float_right">원</span></td>
+            </tr>
+            <tr>
+              <th>지 원 금</th>
+              <td><input type="text" class="money_input float_left" name="table_second_supportPrice" style="width:70%;"><span class="float_right">원</span></td>
+            </tr>
+            <tr>
+              <th rowspan="2">할부원금</th>
+              <td><input type="text" class="money_input float_left" name="table_second_installments_origin" style="width:70%;"><span class="float_right">원</span></td>
+            </tr>
+            <tr>
+              <td><input type="number" class="float_left" name="table_second_installments_period" style="width:70%;"><span class="float_right">개월</span></td>
+            </tr>
+            <tr>
+              <th>위약금</th>
+              <td><input type="text" class="money_input float_left" name="table_second_unpairPrice" style="width:70%;"><span class="float_right">원</span></td>
+            </tr>
+          </table>
+          
+          <div style="width:10%;margin-left:3%;float:left;">
+            <h1 style="line-height:350px;text-align:center;font-size: 5vw;">+</h1>
+          </div>
+
+          <table class="table table-bordered table_second" style="float:right;width:42%;">
+            <tr>
+              <th colspan="2" class="tableTitle"><span class="float_left">나. 통신 비용</span></th>
+            </tr>
+            <tr>
+              <th>월 정액요금</th>
+              <td><input type="text" class="money_input float_left" name="table_second_monthPrice" style="width:70%;"><span class="float_right">원</span></td>
+            </tr>
+            <tr>
+              <th>월 요금할인</th>
+              <td><input type="text" class="money_input float_left" name="table_second_discount" style="width:70%;"><span class="float_right">원</span></td>
+            </tr>
+            <tr>
+              <th>월 납부액<br>(VAT포함)</th>
+              <td><input type="text" class="money_input float_left" name="table_second_contactPeriod" style="width:70%;"><span class="float_right">원</span></td>
+            </tr>
+          </table>
+          <table style="width:80%;height:60px;float:right;margin: 0 0 20px 0;">
+            <tr>
+              <th>다. 월 총 납부액 (가+나)</th>
+              <td><input type="text" class="money_input float_left" name="table_second_total_monthlyPrice" style="width:70%;"><span class="float_right">원/회선</span></td>
+            </tr>
+          </table>
+          <div style="width:15%;float:right;margin: 0 0 20px 0;">
+            <h1 style="text-align:center;font-size: 5vw;line-height:60px;">=</h1>
+          </div>
+
+          <div class="table_box">
+            <!-- <div class="left_title" style="height:100px;line-height:20px;background-color:cornflowerblue;">고객정보</div> -->
+            <table  class="table table-bordered over_third_table" id="third_table" >
+              <th colspan="4" class="tableTitle">고객정보</th>
+              <tr>
+                <th><span style="color:red;">*</span> 가입자명(성명)</th>
+                <td><input type="text" class="full_space_inputbox" name="customer_name" required></td>
+                <th><span style="color:red;">*</span> 연락처</th>
+                <td><input type="text" class="full_space_inputbox" name="customer_phone_num" placeholder="문자청구시 기제된 번호로 발송됩니다." required></td>
+              </tr>
+              <tr>
+                <th><span style="color:red;">*</span> 생년월일</th>
+                <td><input type="date" class="full_space_inputbox" name="customer_birth" required></td>
+                <th rowspan="2"><span style="color:red;">*</span> 법인번호</th>
+                <td rowspan="2"><input type="text" class="full_space_inputbox" name="customer_company_num"></td>
+              <tr>
+                <th><span style="color:red;">*</span> 성별</th>
+                <td>
+                  <select class="full_space_inputbox"  name="customer_gender">
+                    <option value="남성" selected="selected">남성</option>
+                    <option value="여성">여성</option>
+                  </select>
+                </td>
+              </tr>
+              <tr>
+                <th><span style="color:red;">*</span> 청구서종류</th>
+                <td>
+                  <span><input type="checkbox" name="bill_variation_message" id="bill_variation_message" value="ok" />&nbsp;<label for="bill_variation_message">문자 (알림톡)</label></span>
+                </td>
+                <th><span style="color:red;">*</span> E-mail</th>
+                <td><input type="text" class="full_space_inputbox" name="customer_mail" required></td></tr>
+              <tr>
+                <th><span style="color:red;">*</span> 주소</th>
+                <td colspan="5"><input type="text" class="full_space_inputbox" name="customer_address" required></td>
+              </tr>
+            </table>
+          </div>
+
+          <div class="table_box">
+            <table class="table table-bordered over_third_table" id="forth_table">
+              <tr>
+                <th colspan="4" class="tableTitle">요금납부</th>
+              </tr>
+              <tr>
+                <th><span style="color:red;">*</span> 납부자</th>
+                <td><input type="text" class="full_space_inputbox" name="request_name" required></td>
+                <th rowspan="2"><span style="color:red;">*</span> <input type="checkbox" name="auto_payment_other_peaple_chk" id="auto_payment_other_peaple_chk" value="ok" />&nbsp;<label for="auto_payment_other_peaple_chk">타인납부 동의</label></th>
+                <td rowspan="2"><input type="text" class="full_space_inputbox" name="customer_mail" placeholder="동의인" ></td></tr>
+              </tr>
+              <tr>
+                <th><span style="color:red;">*</span> 납부자와의 관계</th>
+                <td><input type="text" class="full_space_inputbox" name="request_name" required></td>
+              </tr>
+              <tr>
+                <th><span style="color:red;">*</span> 납부자 생년월일<br>(법인/사업자등록번호)</th>
+                <td><input type="text" class="full_space_inputbox" name="request_name" required></td>
+                <th><span style="color:red;">*</span> 납부방법</th>
+                <td><span><input type="checkbox" name="direct_bank_payment" id="direct_bank_payment" value="ok" />&nbsp;<label for="direct_bank_payment">은행직접입금 (납부일 25일)</label></span></td>
+              </tr>
+              <tr>
+                <th><span style="color:red;">*</span> 입금 은행 명</th>
+                <td>
+                  <input type="text"class="full_space_inputbox" name="auto_payment_finance_name" required >
+                </td>
+                <th><span style="color:red;">*</span> 입금 계좌 번호</th>
+                <td>
+                  <input type="text" class="full_space_inputbox" name="auto_payment_finance_num" required >
+                </td>
+              </tr>
+              <tr>
+                <th><span style="color:red;">*</span> 납부자(고객)동의</th>
+                <td colspan="3">
+                  <input type="text" class="full_space_inputbox" name="customer_address" required>
+                </td>
+              </tr>
+            </table>
+          </div>
+
+          <div class="table_box">
+            <table class="table table-bordered over_third_table" id="fifth_table" style="height:200px;">
+              <tr>
+                <th colspan="4" class="tableTitle">신청정보</th></tr>
+              <tr>
+              <tr>
+                <th>모델명</th>
+                <td><input type="text" name="single_model_name" class="full_space_inputbox"></td>
+                <th>총회선 수량</th>
+                <td><input type="text" name="totla_line_cnt" class="full_space_inputbox"></td>
+              </tr>
+              <tr>
+                <th rowspan="3">단말정보</th>
+                <td rowspan="3"><input type="text" name="terminal_info" class="full_space_inputbox" placeholder="일련번호"></td>
+                <th rowspan="3">USIM</th>
+                <td><input type="text" name="USIM_price" class="full_space_inputbox"></td>
+              </tr>
+              <tr>
+                <td><input type="text" name="USIM_price" class="full_space_inputbox" ></td>
+              </tr>
+              <tr>
+                <td><input type="text" name="USIM_model_name" class="full_space_inputbox"></td>
+              </tr>
+              <tr>
+                <th>요금제</th>
+                <td>
+                  <span><input type="radio" name="join_service_variation" id="join_service_variation_mini" value="알뜰" />&nbsp;<label for="join_service_variation_mini">알뜰</label></span>
+                  <span><input type="radio" name="join_service_variation" id="join_service_variation_nomal" value="표준" />&nbsp;<label for="join_service_variation_nomal">표준</label></span>
+                  <span><input type="radio" name="join_service_variation" id="join_service_variation_expert" value="고급" />&nbsp;<label for="join_service_variation_expert">고급</label></span>
+                  <span><input type="radio" name="join_service_variation" id="join_service_variation_premieum" value="프리미엄" />&nbsp;<label for="join_service_variation_premieum">프리미엄</label></span>
+                </td>
+                <th>부가서비스</th>
+                <td colspan="2"><input type="text" class="full_space_inputbox" name="join_phone_num" ></td>
+              </tr>
+            </table>
+          </div>
+
+          <div class="table_box">
+            <table class="table table-bordered over_third_table" id="sixth_table">
+              <tr>
+                <th colspan="4" class="tableTitle">선박정보</th>
+              </tr>
+              <tr>
+                <th>선박명</th>
+                <td><input type="text" class="full_space_inputbox" name="ship_name"></td>
+                <th>선박번호</th>
+                <td><input type="text" class="full_space_inputbox" name="ship_num"></td>
+              </tr>
+              <tr>
+                <th>총톤수</th>
+                <td><input type="number" name="total_weight" class="float_left" style="width:70%;" > <span class="float_right">톤</span></td>
+                <th>선적항</th>
+                <td><input type="text" class="full_space_inputbox" name="port_of_shipment"></td>
+              </tr>
+              <tr>
+                <th>선박종류</th>
+                <td><input type="text" class="full_space_inputbox" name="ship_name"></td>
+                <th>항해구역</th>
+                <td><input type="text" name="ship_num" class="float_left" style="width:70%;" > <span class="float_right">km</span></td>
+              </tr>
+            </table>
+          </div>
+
+          <div class="table_box">
+            <table  class="table table-bordered over_third_table" id="sixth_seventh" >
+              <tr>
+                <th colspan="4" style="text-align: center;" class="tableTitle">현장작성상세</th>
+              </tr>
+              <tr>
+                <th>신청서 접수점</th>
+                <td><input type="text" class="full_space_inputbox" name="sales_store_name"></td>
+                <th>판매자</th>
+                <td><input type="text" class="full_space_inputbox" name="sales_people_name" ></td>
+              </tr>
+              <tr>
+                <th>연락처</th>
+                <td colspan="3"><input type="text" class="full_space_inputbox" name="applicant_store_call_number"></td>
+              </tr>
+              <tr>
+                <th><span style="color:red;">*</span> 신청일</th>
+                <td colspan="3"><input type="date" class="full_space_inputbox" name="real_write_contract_date" required></td>
+              </tr>
+              <tr>
+                <th><span style="color:red;">*</span> 가입자명(법인명)</th>
+                <td colspan="3"><input type="text" class="full_space_inputbox" name="applicant_name" required></td>
+              </tr>
+            </table>
+          </div>
+
+          <div class="table_box">
+            <table class="table table-bordered over_third_table" id="third_table">
+              <tr>
+                <th>첨부</th>
+                <td>
+                  <input class="file" type="file" name="contract_copy_file" id="chooseFile" multiple style="width:100%;height:100%;" text="파일 업로드">
+                </td>
+              </tr>
+            </table>
+          </div>
+
+          <p style="text-align:center;margin-top:50px;"><input type="submit" class="btn btn-primary" style="width:100px;height:50px;margin-top:20px;" value="등록" ></p>
+        </form>
+      </div>
+      <%- include("../footer.ejs") %>
+    </div>
+  </body>
+
+  <!-- common script include -->
+  <%- include('../include_script.ejs') %>
+
+  <!-- Daum address search -->
+  <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+
+  <script>
+    let auto_complete_list;
+    window.onload = function(){
+      $('input').attr('autocomplete','off');
+      auto_payment_chk();
+      auto_complete_rate_insert();
+    }
+
+    function address_search(){
+      new daum.Postcode({
+        oncomplete: function(data) {
+          alert(data.address);
+        }
+      }).open();
+    }
+
+    async function before_onsubmit(){
+      let bvc = bill_variation_chk();
+      if(bvc == true){
+        await file_upload();
+        return true;
+      } else {
+        alert("최소 한 가지 이상의 청구방법을 선택해주세요.");
+        return false;
+      }
+    }
+
+    function file_upload(){
+      var test_file = $('#main_form');
+      var formdata = new FormData(test_file[0]);
+
+      /*
+      for (let key of formdata.keys()) {
+        alert(key+":"+formdata.get(key));
+      }
+      */
+
+      $.ajax({
+          type: "POST",
+          enctype: 'multipart/form-data',	
+          url: '<%= server_url %>/file_upload',
+          data: formdata,		
+          processData: false,	
+          contentType: false,	
+          cache: false,
+          async: false,
+          success: function (result) {
+              alert('success');
+              return true;
+          },
+          error: function (e) {
+              alert('fail');
+              return false;
+          }
+      });
+    }
+
+    function bill_variation_chk(){
+      let bill_variation_chk = false;
+      if($('#bill_variation_mail').is(':checked') == true){
+        bill_variation_chk = true;
+      } else if($('#bill_variation_message').is(':checked') == true){
+        bill_variation_chk = true;
+      } else if($('#bill_variation_alram').is(':checked') == true){
+        bill_variation_chk = true;
+      } else if($('#bill_variation_post').is(':checked') == true){
+        bill_variation_chk = true;
+      }
+
+      if(bill_variation_chk == true){
+        return true;
+      } else {
+        alert('');
+        return false;
+      }
+    }
+
+    $('#auto_payment_chk').click(function(){
+      auto_payment_chk();
+    });
+
+    function auto_payment_chk(){
+      if($('#auto_payment_chk').is(':checked') == false){
+        $('.auto_payment').attr("disabled",true);
+      } else {
+        $('.auto_payment').attr("disabled",false);
+        $('.auto_payment').attr("checked",false);
+      }
+    }
+
+    $('#excel_file').change(function(){
+      var test_file = $('#excel_form');
+      var formdata = new FormData(test_file[0]);
+
+      $.ajax({
+          type: "POST",
+          enctype: 'multipart/form-data',	
+          url: '<%= server_url %>/excel_json',
+          data: formdata,		
+          dataType: "JSON",
+          processData: false,	
+          contentType: false,	
+          cache: false,
+          async: false,
+          success: function (result) {
+              // top_table
+              $("input:radio[name='tel_comp'][value='"+result.tel_comp+"']").attr("checked", true);
+              $("input:radio[name='contact_variation'][value='"+result.contact_variation+"']").attr("checked", true);
+              $("input:radio[name='work_variation'][value='"+result.work_variation+"']").attr("checked", true);
+              $("input:radio[name='connect_variation'][value='"+result.connect_variation+"']").attr("checked", true);
+              $("input:radio[name='customer_variation'][value='"+result.customer_variation+"']").attr("checked", true);
+              $("input:radio[name='visit_costomer'][value='"+result.visit_costomer+"']").attr("checked", true);
+              
+              //table_second_1
+              $("input[name='installments']").val(result.installments);
+              $("input[name='table_second_startPrice']").val(result.table_second_startPrice);
+              $("input[name='table_second_supportPrice']").val(result.table_second_supportPrice);
+              $("input[name='table_second_supportPrice_money']").val(result.table_second_supportPrice_money);
+              $("input[name='table_second_installments_origin']").val(result.table_second_installments_origin);
+              $("input[name='table_second_unpairPrice']").val(result.table_second_unpairPrice);
+              
+              //table_second_2
+              $("input[name='line_use_price']").val(result.line_use_price);
+              $("input[name='table_second_price_model_name']").val(result.table_second_price_model_name);
+              $("input[name='table_second_nomalPrice']").val(result.table_second_nomalPrice);
+              $("input[name='table_second_discount']").val(result.table_second_discount);
+              $("input[name='table_second_monthPrice']").val(result.table_second_monthPrice);
+              $("input[name='table_second_contactPeriod']").val(result.table_second_contactPeriod);
+              
+              //table_second_3
+              $("input[name='month_price']").val(result.month_price);
+              $("input[name='table_second_terminal_price']").val(result.table_second_terminal_price);
+              $("input[name='table_second_comuPrice']").val(result.table_second_comuPrice);
+              $("input[name='table_second_addPrice']").val(result.table_second_addPrice);
+              $("input[name='table_second_totalPrice']").val(result.table_second_totalPrice);
+              $("input[name='table_second_plusSupportPrice']").val(result.table_second_plusSupportPrice);
+              $("input[name='table_second_total_monthlyPrice']").val(result.table_second_total_monthlyPrice);
+
+              //over_third_table_1
+              let bill_variation_mail = result.bill_variation_mail;
+              let bill_variation_message = result.bill_variation_message;
+              let bill_variation_alram = result.bill_variation_alram;
+              let bill_variation_post = result.bill_variation_post;
+
+              $("input[name='customer_name']").val(result.customer_name);
+              $("input[name='customer_birth']").val(result.customer_birth);
+              $("input[name='customer_gender']").val(result.customer_gender);
+              $("input[name='customer_phone_num']").val(result.customer_phone_num);
+              $("input[name='customer_company_num']").val(result.customer_company_num);
+              $("input[name='customer_mail']").val(result.customer_mail);
+              $("input[name='customer_address']").val(result.customer_address);
+
+              if(bill_variation_mail == "YES"){
+                $('#bill_variation_mail').attr('checked',true);
+              } 
+
+              if(bill_variation_message == "YES"){
+                $('#bill_variation_message').attr('checked',true);
+              } 
+
+              if(bill_variation_alram == "YES"){
+                $('#bill_variation_alram').attr('checked',true);
+              } 
+
+              if(bill_variation_post == "YES"){
+                $('#bill_variation_post').attr('checked',true);
+              } 
+
+              //over_third_table_2
+              let auto_payment_chk = result.auto_payment_chk;
+              if(auto_payment_chk == "YES"){
+                $('#auto_payment_chk').attr('checked',true);
+                $("input:radio[name='auto_payment'][value='"+result.auto_payment+"']").attr("checked", true);
+                $('.auto_payment').attr("disabled",false);
+              }
+              $("input[name='auto_payment_finance_name']").val(result.auto_payment_finance_name);
+              $("input[name='auto_payment_finance_num']").val(result.auto_payment_finance_num);
+              $("input[name='finance_master_birth']").val(result.finance_master_birth);
+              $("input[name='finance_master_name']").val(result.finance_master_name);
+              $("input[name='finance_master_valid']").val(result.finance_master_valid);
+              $("input[name='finance_master_relation']").val(result.finance_master_relation);
+              if(result.auto_payment_other_peaple_chk == "YES"){
+                $('#auto_payment_other_peaple_chk').attr("checked",true);
+              }
+              $("input[name='request_name']").val(result.request_name);
+
+              //over_third_table_3
+              $("input:radio[name='join_service_variation'][value='"+result.join_service_variation+"']").attr("checked", true);
+              $("input:radio[name='join_price_variation'][value='"+result.join_price_variation+"']").attr("checked", true);
+              $("input:radio[name='USIM_price_variation'][value='"+result.USIM_price_variation+"']").attr("checked", true);
+              $("input[name='fifth_table_monthly_price']").val(result.fifth_table_monthly_price);
+              $("input[name='join_price']").val(result.join_price);
+              $("input[name='USIM_price']").val(result.USIM_price);
+              $("input[name='single_model_name']").val(result.single_model_name);
+              $("input[name='terminal_num_or_IMEI']").val(result.terminal_num_or_IMEI);
+              $("input[name='USIM_model_name']").val(result.USIM_model_name);
+              $("input[name='USIM_num']").val(result.USIM_num);
+              $("input[name='join_phone_num']").val(result.join_phone_num);
+
+              //over_third_table_4
+              $("input[name='sales_people_name']").val(result.sales_people_name);
+              $("input[name='sales_store_name']").val(result.sales_store_name);
+              $("input[name='ship_num']").val(result.ship_num);
+              $("input[name='ship_name']").val(result.ship_name);
+              $("textarea[name='other_input_text']").val(result.other_input_text);
+
+              //over_third_table_5
+              $("input[name='real_write_contract_date']").val(result.real_write_contract_date);
+              $("input[name='applicant_name']").val(result.applicant_name);
+              $("input[name='applicant_store']").val(result.applicant_store);
+              $("input[name='applicant_sales_man_name']").val(result.applicant_sales_man_name);
+              $("input[name='applicant_store_call_number']").val(result.applicant_store_call_number);
+              return true;
+          },
+          error: function (e) {
+              alert(e.error);
+              return false;
+          }
+      });
+    });
+
+    function auto_complete_rate_insert(){
+      $.ajax({
+          type: "GET",
+          url: '<%= server_url %>/get_auto_complete_list_json',
+          dataType: "JSON",
+          success: function (result) {
+            for(var key in result){
+              let rate_line = "<option value='" + result[key].idx + "'>" + result[key].list_name + "</option>";
+              $('#auto_complete_rate').append(rate_line);
+            }
+
+            auto_complete_list = result;
+          },
+          error: function(err){
+            console.log(err);
+          }
+      });
+    }
+
+    $('#auto_complete_rate').change(function(){
+      let list_idx = $('#auto_complete_rate').val();
+
+      let key_list;
+      let value_list;
+
+      for(var key in auto_complete_list){
+        if(auto_complete_list[key].idx == list_idx){
+          key_list = Object.keys(auto_complete_list[key]);
+          value_list = Object.values(auto_complete_list[key]);
+          $('input[name="table_second_price_model_name"]').val(auto_complete_list[key].plan_name);
+          $('input:radio[name="join_service_variation"][value="' + auto_complete_list[key].plan_name + '"]').attr("checked", true);
+
+          break;
+        }
+      }
+
+      for(var i=0; i<key_list.length; i++){
+        $('input[name="'+key_list[i]+'"').val(value_list[i]);
+      }
+    });
+    
+    $('input').keydown(function() {
+      if (event.keyCode === 13) {
+        event.preventDefault();
+      };
+    });
+
+    $('.money_input').keydown(function(){
+      if(event.keyCode >= 47 && event.keyCode <= 57){
+        event.returnValue=true;
+        return true;
+      } else if (event.keyCode >= 96 && event.keyCode <= 105){
+        event.returnValue=true;
+        return true;
+      } else if(event.keyCode == 8 || event.keyCode == 9){
+        event.returnValue=true;
+        return true;
+      } else {
+        event.returnValue=false;
+        return false;
+      }
+    });
+
+    $('.money_input').keyup(function(){
+      let value = $(this).val().replace(/\,/g, '');
+      value = value.replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1,');
+
+      $(this).val(value);
+    })
+  </script>
+</html>
