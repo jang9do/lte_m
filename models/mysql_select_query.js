@@ -72,25 +72,23 @@ module.exports = {
         return new Promise (function(response, reject){
             let params = [user_id, contract_date_start, contract_date_end];
             let sql = 'SELECT con.idx idx, customer_detail.customer_name customer_name, customer_detail.gender gender, DATE_FORMAT(customer_detail.birth,"%Y-%m-%d") birth, customer_detail.tel tel, DATE_FORMAT(applicant_detail.real_write_contract_date,"%Y-%m-%d") real_write_contract_date, applicant_detail.applicant_name applicant_name, DATE_FORMAT(con.regDate,"%Y-%m-%d") regDate  FROM '+process.env.MYSQL_DATABASE+'.contract con '
-            sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.c_network c_network ON con.c_network_idx = c_network.idx '
-            sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.terminal_purchase terminal_purchase ON con.terminal_purchase_idx = terminal_purchase.idx '
-            sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.c_line_useprice c_line_useprice ON con.c_line_usePrice_idx = c_line_useprice.idx '
+            sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.basic_information basic_information ON con.basic_information_idx = basic_information.idx '
             sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.monthly_price monthly_price ON con.monthly_price_idx = monthly_price.idx '
             sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.customer_detail customer_detail ON con.customer_detail_idx = customer_detail.idx '
             sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.payment_detail payment_detail ON con.payment_detail_idx = payment_detail.idx '
             sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.service_detail service_detail ON con.service_detail_idx = service_detail.idx '
-            sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.other_information other_information ON con.other_information_idx = other_information.idx '
+            sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.ship_information ship_information ON con.ship_information_idx = ship_information.idx '
             sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.applicant_detail applicant_detail ON con.applicant_detail_idx = applicant_detail.idx '
             sql = sql + 'WHERE con.create_user=? AND con.delFlag=0 AND con.contract_status=1 AND applicant_detail.real_write_contract_date BETWEEN ? AND concat(?," 23:59:59")';
             if(customer_variation != null){
-                sql = sql + ' AND c_network.customer_type = ?';
+                sql = sql + ' AND basic_information.customer_type = ?';
                 params.push(customer_variation);
             }
             if(auto_payment_chk != null){
-                sql = sql + ' AND payment_detail.auto_payment = ?';
+                sql = sql + ' AND payment_detail.other_people_payment_agree = ?';
                 params.push(auto_payment_chk);
             }if(sales_people_or_store_name != null){
-                sql = sql + ' AND (other_information.main_manager like concat("%",?,"%") OR other_information.contract_store like concat("%",?,"%"))';
+                sql = sql + ' AND (applicant_detail.applicant_sales_man_name like concat("%",?,"%") OR applicant_detail.applicant_store like concat("%",?,"%"))';
                 params.push(sales_people_or_store_name);
                 params.push(sales_people_or_store_name);
             }
@@ -111,14 +109,12 @@ module.exports = {
         return new Promise (function(response, reject){
             let params = [contract_date_start, contract_date_end];
             let sql = 'SELECT con.idx idx, customer_detail.customer_name customer_name, customer_detail.gender gender, DATE_FORMAT(customer_detail.birth,"%Y-%m-%d") birth, customer_detail.tel tel, DATE_FORMAT(applicant_detail.real_write_contract_date,"%Y-%m-%d") real_write_contract_date, applicant_detail.applicant_name applicant_name, DATE_FORMAT(con.regDate,"%Y-%m-%d") regDate, con.delFlag delFlag  FROM '+process.env.MYSQL_DATABASE+'.contract con '
-            sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.c_network c_network ON con.c_network_idx = c_network.idx '
-            sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.terminal_purchase terminal_purchase ON con.terminal_purchase_idx = terminal_purchase.idx '
-            sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.c_line_useprice c_line_useprice ON con.c_line_usePrice_idx = c_line_useprice.idx '
+            sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.basic_information basic_information ON con.basic_information_idx = basic_information.idx '
             sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.monthly_price monthly_price ON con.monthly_price_idx = monthly_price.idx '
             sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.customer_detail customer_detail ON con.customer_detail_idx = customer_detail.idx '
             sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.payment_detail payment_detail ON con.payment_detail_idx = payment_detail.idx '
             sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.service_detail service_detail ON con.service_detail_idx = service_detail.idx '
-            sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.other_information other_information ON con.other_information_idx = other_information.idx '
+            sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.ship_information ship_information ON con.ship_information_idx = ship_information.idx '
             sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.applicant_detail applicant_detail ON con.applicant_detail_idx = applicant_detail.idx '
             sql = sql + 'WHERE con.contract_status=1 AND applicant_detail.real_write_contract_date BETWEEN ? AND concat(?," 23:59:59")';
             if(customer_variation != null){
@@ -148,7 +144,7 @@ module.exports = {
     
     select_get_contract_all_idx: function(idx){
         return new Promise (function(response, reject){
-            let sql = 'SELECT auto_complete_list_idx, c_network_idx, terminal_purchase_idx, c_line_usePrice_idx, monthly_price_idx, customer_detail_idx, payment_detail_idx, service_detail_idx, other_information_idx, applicant_detail_idx, attached_file_flag, create_user, modify_user, regDate, modDate, contract_status, delFlag ';
+            let sql = 'SELECT auto_complete_list_idx, basic_information_idx, monthly_price_idx, customer_detail_idx, payment_detail_idx, service_detail_idx, ship_information_idx, applicant_detail_idx, attached_file_flag, create_user, modify_user, regDate, modDate, contract_status, delFlag ';
             sql = sql + 'FROM '+process.env.MYSQL_DATABASE+'.contract WHERE idx=?';
             let params = [idx];
 
@@ -163,10 +159,10 @@ module.exports = {
         });
     },
 
-    select_c_network_detail: function(c_network_idx){
+    select_basic_information_detail: function(basic_information_idx){
         return new Promise (function(response, reject){
-            let sql = 'SELECT network, contract_type, contract_work, open_tel_type, customer_type, visit_customer FROM '+process.env.MYSQL_DATABASE+'.c_network WHERE delFlag=0 AND idx= ?';
-            let params = [c_network_idx];
+            let sql = 'SELECT contract_type, open_tel_type, customer_type, agreement_period FROM '+process.env.MYSQL_DATABASE+'.basic_information WHERE delFlag=0 AND idx= ?';
+            let params = [basic_information_idx];
 
             mysqlConn.query(sql, params, function(err, data){
                 if(!err){
@@ -179,6 +175,7 @@ module.exports = {
         });
     },
 
+    /*
     select_terminal_purchase_detail: function(terminal_purchase_idx){
         return new Promise (function(response, reject){
             let sql = 'SELECT installments, FORMAT(initial_price, 0) initial_price, FORMAT(discount_support, 0) discount_support, FORMAT(discount_cash_price, 0) discount_cash_price, FORMAT(installments_origin, 0) installments_origin, FORMAT(unpair_price, 0) unpair_price FROM '+process.env.MYSQL_DATABASE+'.terminal_purchase WHERE delFlag=0 AND idx= ?';
@@ -210,10 +207,10 @@ module.exports = {
             });
         });
     },
-
+    */
     select_monthly_price_detail: function(monthly_price_idx){
         return new Promise (function(response, reject){
-            let sql = 'SELECT FORMAT(repeat_monthly_price, 0) repeat_monthly_price, FORMAT(terminal_price, 0) terminal_price, FORMAT(comunication_price, 0) comunication_price, FORMAT(other_service_price, 0) other_service_price, FORMAT(total_price, 0) total_price, FORMAT(after_support_price, 0) after_support_price, FORMAT(total_monthly_price, 0) total_monthly_price FROM '+process.env.MYSQL_DATABASE+'.monthly_price WHERE delFlag=0 AND idx= ?';
+            let sql = 'SELECT FORMAT(start_price, 0) start_price, FORMAT(support_price, 0) support_price, FORMAT(installments_origin, 0) installments_origin, FORMAT(installments_period, 0) installments_period, FORMAT(monthly_installments, 0) monthly_installments, FORMAT(installments_commission, 0) installments_commission, FORMAT(monthly_price, 0) monthly_price, FORMAT(monthly_discount, 0) monthly_discount, FORMAT(monthly_payments, 0) monthly_payments, FORMAT(total_monthly_price, 0) total_monthly_price FROM '+process.env.MYSQL_DATABASE+'.monthly_price WHERE delFlag=0 AND idx= ?';
             let params = [monthly_price_idx];
 
             mysqlConn.query(sql, params, function(err, data){
@@ -229,7 +226,7 @@ module.exports = {
 
     select_customer_detail_detail: function(customer_detail_idx){
         return new Promise (function(response, reject){
-            let sql = "SELECT customer_name, DATE_FORMAT(birth,'%Y-%m-%d') birth, gender, tel, coperation_num, email, address, bill_type FROM "+process.env.MYSQL_DATABASE+".customer_detail WHERE delFlag=0 AND idx= ?";
+            let sql = "SELECT customer_name, tel, DATE_FORMAT(birth,'%Y-%m-%d') birth, gender, coperation_num, bill_type, email, address FROM "+process.env.MYSQL_DATABASE+".customer_detail WHERE delFlag=0 AND idx= ?";
             let params = [customer_detail_idx];
 
             mysqlConn.query(sql, params, function(err, data){
@@ -245,7 +242,7 @@ module.exports = {
 
     select_payment_detail_detail: function(payment_detail_idx){
         return new Promise (function(response, reject){
-            let sql = "SELECT auto_payment, auto_payment_type, finance_name, wallet_num, DATE_FORMAT(auto_payment_user_birth,'%Y-%m-%d') auto_payment_user_birth, auto_payment_user_name, DATE_FORMAT(auto_payment_user_period, '%Y-%m-%d') auto_payment_user_period, user_relation, IF(auto_payment_agree='no','동의 안함', '동의') auto_payment_agree, request_user_name FROM "+process.env.MYSQL_DATABASE+".payment_detail WHERE delFlag=0 AND idx= ?";
+            let sql = "SELECT payer_name, payer_relation, other_people_payment_agree, consenter, payer_birth, payments_method, finance_name, wallet_num, customer_agree FROM "+process.env.MYSQL_DATABASE+".payment_detail WHERE delFlag=0 AND idx= ?";
             let params = [payment_detail_idx];
 
             mysqlConn.query(sql, params, function(err, data){
@@ -261,7 +258,7 @@ module.exports = {
 
     select_service_detail_detail: function(service_detail_idx){
         return new Promise (function(response, reject){
-            let sql = "SELECT service_name, FORMAT(monthly_price, 0) monthly_price, FORMAT(join_fee, 0) join_fee, join_fee_type, terminal_model_name, terminal_no_or_IMEI, usim_model_name, usim_no, FORMAT(usim_price, 0) usim_price, usim_price_payment_type, join_tel FROM "+process.env.MYSQL_DATABASE+".service_detail WHERE delFlag=0 AND idx= ?";
+            let sql = "SELECT terminal_model_name, line_cnt, terminal_no_or_IMEI, FORMAT(usim_price, 0) usim_price, usim_model_name, usim_no, join_fee_type, extra_service FROM "+process.env.MYSQL_DATABASE+".service_detail WHERE delFlag=0 AND idx= ?";
             let params = [service_detail_idx];
 
             mysqlConn.query(sql, params, function(err, data){
@@ -275,10 +272,10 @@ module.exports = {
         });
     },
 
-    select_other_information_detail: function(other_information_idx){
+    select_ship_information_detail: function(ship_information_idx){
         return new Promise (function(response, reject){
-            let sql = "SELECT main_manager, contract_store, ship_no, ship_name, note FROM "+process.env.MYSQL_DATABASE+".other_information WHERE delFlag=0 AND idx= ?";
-            let params = [other_information_idx];
+            let sql = "SELECT ship_name, ship_no, total_weight, port_of_shipment, ship_type, ship_navigation_area FROM "+process.env.MYSQL_DATABASE+".ship_information WHERE delFlag=0 AND idx= ?";
+            let params = [ship_information_idx];
 
             mysqlConn.query(sql, params, function(err, data){
                 if(!err){
@@ -293,7 +290,7 @@ module.exports = {
 
     select_applicant_detail_detail: function(applicant_detail_idx){
         return new Promise (function(response, reject){
-            let sql = "SELECT DATE_FORMAT(real_write_contract_date, '%Y-%m-%d') real_write_contract_date, applicant_name, applicant_store, applicant_sales_man_name, applicant_store_call_number FROM "+process.env.MYSQL_DATABASE+".applicant_detail WHERE delFlag=0 AND idx= ?";
+            let sql = "SELECT applicant_store, applicant_sales_man_name, applicant_store_call_number, DATE_FORMAT(real_write_contract_date, '%Y-%m-%d') real_write_contract_date, applicant_name FROM "+process.env.MYSQL_DATABASE+".applicant_detail WHERE delFlag=0 AND idx= ?";
             let params = [applicant_detail_idx];
 
             mysqlConn.query(sql, params, function(err, data){
@@ -412,7 +409,7 @@ module.exports = {
 
     select_get_before_contract_all_idx: function(before_idx){
         return new Promise (function(response, reject){
-            let sql = 'SELECT idx, auto_complete_list_idx, c_network_idx, terminal_purchase_idx, c_line_usePrice_idx, monthly_price_idx, customer_detail_idx, payment_detail_idx, service_detail_idx, other_information_idx, applicant_detail_idx, attached_file_flag, attached_file_idx_list, create_user, IF(modify_user IS NULL, create_user, modify_user) modify_user, regDate, DATE_FORMAT(origin_modDate, "%Y-%m-%d %H:%i") origin_modDate, contract_status ';
+            let sql = 'SELECT idx, auto_complete_list_idx, basic_information_idx, monthly_price_idx, customer_detail_idx, payment_detail_idx, service_detail_idx, ship_information_idx, applicant_detail_idx, attached_file_flag, attached_file_idx_list, create_user, IF(modify_user IS NULL, create_user, modify_user) modify_user, regDate, DATE_FORMAT(origin_modDate, "%Y-%m-%d %H:%i") origin_modDate, contract_status ';
             sql = sql + 'FROM '+process.env.MYSQL_DATABASE+'.contract_before_log WHERE idx=?';
             let params = [before_idx];
 
@@ -462,17 +459,15 @@ module.exports = {
 
     select_get_customer_type_chart: function(){
         return new Promise (function(response, reject){
-            let sql = 'SELECT c_network.customer_type customer_type, COUNT(c_network.customer_type) type_count FROM '+process.env.MYSQL_DATABASE+'.contract con ';
-            sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.c_network c_network ON con.c_network_idx = c_network.idx ';
-            sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.terminal_purchase terminal_purchase ON con.terminal_purchase_idx = terminal_purchase.idx ';
-            sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.c_line_useprice c_line_useprice ON con.c_line_usePrice_idx = c_line_useprice.idx ';
+            let sql = 'SELECT basic_information.customer_type customer_type, COUNT(basic_information.customer_type) type_count FROM '+process.env.MYSQL_DATABASE+'.contract con ';
+            sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.basic_information basic_information ON con.basic_information_idx = basic_information.idx ';
             sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.monthly_price monthly_price ON con.monthly_price_idx = monthly_price.idx ';
             sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.customer_detail customer_detail ON con.customer_detail_idx = customer_detail.idx ';
             sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.payment_detail payment_detail ON con.payment_detail_idx = payment_detail.idx ';
             sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.service_detail service_detail ON con.service_detail_idx = service_detail.idx ';
-            sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.other_information other_information ON con.other_information_idx = other_information.idx ';
+            sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.ship_information ship_information ON con.ship_information_idx = ship_information.idx ';
             sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.applicant_detail applicant_detail ON con.applicant_detail_idx = applicant_detail.idx ';
-            sql = sql + 'GROUP BY c_network.customer_type ';
+            sql = sql + 'GROUP BY basic_information.customer_type ';
             
             mysqlConn.query(sql, function(err, data){
                 if(!err){
@@ -487,18 +482,16 @@ module.exports = {
 
     select_get_service_type_chart: function(){
         return new Promise (function(response, reject){
-            let sql = 'SELECT service_detail.service_name service_name, COUNT(service_detail.service_name) service_cnt FROM '+process.env.MYSQL_DATABASE+'.contract con ';
-            sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.c_network c_network ON con.c_network_idx = c_network.idx ';
-            sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.terminal_purchase terminal_purchase ON con.terminal_purchase_idx = terminal_purchase.idx ';
-            sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.c_line_useprice c_line_useprice ON con.c_line_usePrice_idx = c_line_useprice.idx ';
+            let sql = 'SELECT service_detail.join_fee_type service_name, COUNT(service_detail.join_fee_type) service_cnt FROM '+process.env.MYSQL_DATABASE+'.contract con ';
+            sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.basic_information basic_information ON con.basic_information_idx = basic_information.idx ';
             sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.monthly_price monthly_price ON con.monthly_price_idx = monthly_price.idx ';
             sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.customer_detail customer_detail ON con.customer_detail_idx = customer_detail.idx ';
             sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.payment_detail payment_detail ON con.payment_detail_idx = payment_detail.idx ';
             sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.service_detail service_detail ON con.service_detail_idx = service_detail.idx ';
-            sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.other_information other_information ON con.other_information_idx = other_information.idx ';
+            sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.ship_information ship_information ON con.ship_information_idx = ship_information.idx ';
             sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.applicant_detail applicant_detail ON con.applicant_detail_idx = applicant_detail.idx ';
-            sql = sql + 'WHERE con.contract_status=1 AND con.delFlag=0 AND service_name IS NOT NULL '
-            sql = sql + 'GROUP BY service_detail.service_name ';
+            sql = sql + 'WHERE con.contract_status=1 AND con.delFlag=0 AND service_detail.join_fee_type IS NOT NULL '
+            sql = sql + 'GROUP BY service_detail.join_fee_type ';
             
             mysqlConn.query(sql, function(err, data){
                 if(!err){
@@ -514,14 +507,12 @@ module.exports = {
     select_monthly_contract_chart: function(){
         return new Promise (function(response, reject){
             let sql = 'SELECT DATE_FORMAT(applicant_detail.real_write_contract_date, "%Y-%m") con_date, count(DATE_FORMAT(applicant_detail.real_write_contract_date, "%Y-%m")) con_cnt FROM '+process.env.MYSQL_DATABASE+'.contract con ';
-            sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.c_network c_network ON con.c_network_idx = c_network.idx ';
-            sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.terminal_purchase terminal_purchase ON con.terminal_purchase_idx = terminal_purchase.idx ';
-            sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.c_line_useprice c_line_useprice ON con.c_line_usePrice_idx = c_line_useprice.idx ';
+            sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.basic_information basic_information ON con.basic_information_idx = basic_information.idx ';
             sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.monthly_price monthly_price ON con.monthly_price_idx = monthly_price.idx ';
             sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.customer_detail customer_detail ON con.customer_detail_idx = customer_detail.idx ';
             sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.payment_detail payment_detail ON con.payment_detail_idx = payment_detail.idx ';
             sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.service_detail service_detail ON con.service_detail_idx = service_detail.idx ';
-            sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.other_information other_information ON con.other_information_idx = other_information.idx ';
+            sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.ship_information ship_information ON con.ship_information_idx = ship_information.idx ';
             sql = sql + 'LEFT JOIN '+process.env.MYSQL_DATABASE+'.applicant_detail applicant_detail ON con.applicant_detail_idx = applicant_detail.idx ';
             sql = sql + 'WHERE DATE_FORMAT(DATE_ADD(NOW(), INTERVAL -6 MONTH), "%Y-%m-01") < applicant_detail.real_write_contract_date AND con.contract_status=1 AND con.delFlag=0 ';
             sql = sql + 'GROUP BY DATE_FORMAT(applicant_detail.real_write_contract_date, "%Y-%m") ';
@@ -540,12 +531,30 @@ module.exports = {
 
     select_auto_complete_list: function(){
         return new Promise (function(response, reject){
-            let sql = 'SELECT idx, list_name, plan_name, installments, table_second_startPrice, table_second_supportPrice, table_second_installments_origin, table_second_nomalPrice, table_second_discount, table_second_monthPrice, table_second_total_monthlyPrice ';
+            let sql = 'SELECT idx, list_name, join_service_variation, agreement_period, table_second_startPrice, table_second_supportPrice, table_second_installments_origin, table_second_monthly_installments, table_second_monthlyPrice, table_second_monthlyDiscount, table_second_monthlyPayments, table_second_total_monthlyPrice ';
             sql = sql + 'FROM '+process.env.MYSQL_DATABASE+'.auto_complete_list WHERE delFlag=0';
             
             mysqlConn.query(sql, function(err, data){
                 if(!err){
                     response(JSON.stringify(data));
+                } else {
+                    console.log("fail?");
+                    reject(err);
+                }
+            });
+        })
+    },
+
+    select_auto_complete_value: function(auto_complete_list_idx){
+        return new Promise (function(response, reject){
+            let sql = 'SELECT idx, list_name, join_service_variation, agreement_period, table_second_startPrice, table_second_supportPrice, table_second_installments_origin, table_second_monthly_installments, table_second_monthlyPrice, table_second_monthlyDiscount, table_second_monthlyPayments, table_second_total_monthlyPrice ';
+            sql = sql + 'FROM '+process.env.MYSQL_DATABASE+'.auto_complete_list WHERE delFlag=0 AND idx=?';
+
+            params = [auto_complete_list_idx];
+            
+            mysqlConn.query(sql, params, function(err, data){
+                if(!err){
+                    response(data);
                 } else {
                     console.log("fail?");
                     reject(err);

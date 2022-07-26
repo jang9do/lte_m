@@ -3,11 +3,11 @@ const mysqlConn = mysqlConnObj.init();
 mysqlConnObj.open(mysqlConn);
 
 module.exports = {
-    update_contract_main: function(auto_complete_list_idx, c_network_detail_idx, terminal_purchase_idx, c_line_usePrice_idx, monthly_price_idx, customer_detail_idx, payment_detail_idx, service_detail_idx, other_information_idx, applicant_detail_idx, attached_file_flag, create_user_id, modify_user_id, main_idx){
+    update_contract_main: function(auto_complete_list_idx, basic_information_idx, monthly_price_idx, customer_detail_idx, payment_detail_idx, service_detail_idx, ship_information_idx, applicant_detail_idx, attached_file_flag, create_user_id, modify_user_id, main_idx){
         return new Promise (function(response, reject){
-            let sql = 'UPDATE `'+process.env.MYSQL_DATABASE+'`.`contract` SET `auto_complete_list_idx`=?, `c_network_idx`=?, `terminal_purchase_idx`=?, `c_line_usePrice_idx`=?, `monthly_price_idx`=?, `customer_detail_idx`=?, `payment_detail_idx`=?, `service_detail_idx`=?, `other_information_idx`=?, `applicant_detail_idx`=?, `attached_file_flag`=?, `create_user`=?, `modify_user`=?, `modDate`=NOW() ';
+            let sql = 'UPDATE `'+process.env.MYSQL_DATABASE+'`.`contract` SET `auto_complete_list_idx`=?, `basic_information_idx`=?, `monthly_price_idx`=?, `customer_detail_idx`=?, `payment_detail_idx`=?, `service_detail_idx`=?, `ship_information_idx`=?, `applicant_detail_idx`=?, `attached_file_flag`=?, `create_user`=?, `modify_user`=?, `modDate`=NOW() ';
             sql = sql + 'WHERE idx=?';
-            let params = [auto_complete_list_idx, c_network_detail_idx, terminal_purchase_idx, c_line_usePrice_idx, monthly_price_idx, customer_detail_idx, payment_detail_idx, service_detail_idx, other_information_idx, applicant_detail_idx, attached_file_flag, create_user_id, modify_user_id, main_idx];
+            let params = [auto_complete_list_idx, basic_information_idx, monthly_price_idx, customer_detail_idx, payment_detail_idx, service_detail_idx, ship_information_idx, applicant_detail_idx, attached_file_flag, create_user_id, modify_user_id, main_idx];
             mysqlConn.query(sql, params,function(err, data){
                 if(!err){
                     response('OK');

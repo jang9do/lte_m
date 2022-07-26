@@ -1,5 +1,3 @@
-const http = require('http');
-
 /*
 const cors = require('cors');
 const corsOptions = {
@@ -14,6 +12,7 @@ const session = require('express-session');
 const mysql_session = require('express-mysql-session');
 const logger = require('morgan');
 const app = express();
+const path = require('path');
 
 const routes = require("./routes/");
 require('dotenv').config();
@@ -48,12 +47,10 @@ app.use(routes);
 app.use("/public",express.static(process.env.LOCAL_DIR+"/public"));
 app.use("/img",express.static(process.env.LOCAL_DIR+"/img"));
 
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
 
-
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-    next(createError(404));
-});
 
 // error handler
     app.use(function(err, req, res, next) {

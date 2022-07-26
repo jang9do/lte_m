@@ -12,7 +12,7 @@
     <!-- common css include -->
     <%- include('../include_css.ejs') %>
     <!-- Custom styles for this template -->
-    <link href="<%= server_url %>/public/css/contract/show_lte_contract.css" rel="stylesheet">
+    <link href="<%= server_url %>/public/css/contract/insert_contract_v2.css" rel="stylesheet">
 
   </head>
   <body>
@@ -21,303 +21,293 @@
       <div id="contents_space">
         <h2>
           <img src="<%= server_url %>/img/amtel.png" style="height:80px;" /><%= contract_before_idx_list.modify_user %>가 <%= contract_before_idx_list.origin_modDate %>에 수정한 기록<span class="float_right" >
-          <span class="float_right" >
-            <div class="dropdown" style="float:right;margin-right:10px;">
-              <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                  <li><a class="dropdown-item" href="#"><%= user_id %></a></li>
-                  <li style="background-color:lightcoral;"><a class="dropdown-item" href="<%= server_url %>/logout" style="color:white;font-weight:bold;">로그아웃</a></li>
-              </ul>
-            </div>
-          </span>
         </h2>
-          <table id="top_table" class="table table-bordered ">
+        <table id="top_table" class="table table-bordered first_table">
+          <tr>
+            <th>계약구분</th>
+            <td>
+              <span><input type="radio" name="contact_variation" id="contact_variation_first" value="최초"  />&nbsp;<label for="contact_variation_first">최초</label></span>
+            </td>
+          </tr>
+          <tr>
+            <th>개통방법</th>
+            <td>
+              <span><input type="radio" name="connect_variation" id="connect_variation" value="단말개통" />&nbsp;<label for="connect_variation">단말개통</label></span>
+            </td>
+          </tr>
+          <tr>
+            <th>고객구분</th>
+            <td>
+              <span><input type="radio" name="customer_variation" id="customer_variation_personal" value="개인" />&nbsp;<label for="customer_variation_personal">개인</label></span>
+              <span><input type="radio" name="customer_variation" id="connect_variation_percomp" value="개인사업자" />&nbsp;<label for="connect_variation_percomp">개인사업자</label></span>
+              <span><input type="radio" name="customer_variation" id="connect_variation_comp" value="법인" />&nbsp;<label for="connect_variation_comp">법인</label></span>
+            </td>
+          </tr>
+          <tr>
+            <th>요금제 선택</th>
+            <td colspan="3">
+              <input type="text" class="full_space_inputbox" name="auto_complete_rate" id="auto_complete_rate" value="음" >
+            </td>
+          </tr>
+          <tr>
+            <th>약정기간 (개월)</th>
+            <td>
+              <select name="agreement_period" id="agreement_period" class="full_space_inputbox" >
+                <option value="6">6</option>
+                <option value="12">12</option>
+                <option value="18">18</option>
+                <option value="24">24</option>
+                <option value="30">30</option>
+                <option value="36">36</option>
+                <option value="42">42</option>
+                <option value="48">48</option>
+                <option value="54">54</option>
+                <option value="60">60</option>
+              </select> 
+            </td>
+          </tr>
+        </table>
+
+        <table class="table table-bordered table_second" style="float:left;width:42%;">
+          <tr>
+            <th colspan="2" class="tableTitle"><span class="float_left">가. 단말기 비용</span></th>
+          </tr>
+          <tr>
+            <th>① 출 고 가</th>
+            <td><input type="text" class="money_input float_left" name="table_second_startPrice" style="width:60%;"><span class="float_right">원</span></td>
+          </tr>
+          <tr>
+            <th>② 지 원 금</th>
+            <td><input type="text" class="money_input float_left" name="table_second_supportPrice" style="width:60%;"><span class="float_right">원</span></td>
+          </tr>
+          <tr>
+            <th rowspan="2">③ 할부원금</th>
+            <td><input type="text" class="money_input float_left" name="table_second_installments_origin" style="width:60%;"><span class="float_right">원</span></td>
+          </tr>
+          <tr>
+            <td><input type="number" class="float_left" name="table_second_installments_period" style="width:60%;"><span class="float_right">개월</span></td>
+          </tr>
+          <tr>
+            <th>월 납부할부금</th>
+            <td><input type="text" class="money_input float_left" name="table_second_monthly_installments" style="width:60%;"><span class="float_right">원</span></td>
+          </tr>
+          <tr>
+            <th>할부수수료</th>
+            <td><input type="text" class="money_input float_left" name="table_second_installments_commission" style="width:60%;"><span class="float_right">원</span></td>
+          </tr>
+        </table>
+        
+        <div style="width:10%;margin-left:3%;float:left;">
+          <h1 style="line-height:350px;text-align:center;font-size: 5vw;">+</h1>
+        </div>
+
+        <table class="table table-bordered table_second" style="float:right;width:42%;">
+          <tr>
+            <th colspan="2" class="tableTitle"><span class="float_left">나. 통신 비용</span></th>
+          </tr>
+          <tr>
+            <th>④ 월 정액요금</th>
+            <td><input type="text" class="money_input float_left" name="table_second_monthlyPrice" style="width:70%;"><span class="float_right">원</span></td>
+          </tr>
+          <tr>
+            <th>⑤ 월 요금할인</th>
+            <td><input type="text" class="money_input float_left" name="table_second_monthlyDiscount" style="width:70%;"><span class="float_right">원</span></td>
+          </tr>
+          <tr>
+            <th>월 납부액(④+⑤)<br>(VAT포함)</th>
+            <td><input type="text" class="money_input float_left" name="table_second_monthlyPayments" style="width:70%;"><span class="float_right">원</span></td>
+          </tr>
+        </table>
+        <table style="width:80%;height:60px;float:right;margin: 0 0 20px 0;">
+          <tr>
+            <th class="tableTitle" style="width:200px;">다. 월 총 납부액<br>(가+나)</th>
+            <td><input type="text" class="money_input float_left" name="table_second_total_monthlyPrice" style="width:70%;"><span class="float_right">원/회선</span></td>
+          </tr>
+        </table>
+        <div style="width:15%;float:right;margin: 0 0 20px 0;">
+          <h1 style="text-align:center;font-size: 5vw;line-height:60px;">=</h1>
+        </div>
+
+        <div class="table_box">
+          <!-- <div class="left_title" style="height:100px;line-height:20px;background-color:cornflowerblue;">고객정보</div> -->
+          <table  class="table table-bordered over_third_table" id="third_table" >
+            <th colspan="4" class="tableTitle">고객정보</th>
             <tr>
-              <th>자동완성</th>
+              <th><span style="color:red;">*</span> 가입자명(성명)</th>
+              <td><input type="text" class="full_space_inputbox" name="customer_name" required></td>
+              <th><span style="color:red;">*</span> 연락처</th>
+              <td><input type="text" class="full_space_inputbox" name="customer_phone_num" placeholder="문자청구시 기제된 번호로 발송됩니다." required></td>
+            </tr>
+            <tr>
+              <th class="divined_line"><span style="color:red;">*</span> 생년월일</th>
+              <td class="divined_line"><input type="date" class="full_space_inputbox" name="customer_birth" required></td>
+              <th rowspan="2"><span style="color:red;">*</span> 법인/<br>사업자등록번호</th>
+              <td rowspan="2"><input type="text" class="full_space_inputbox" name="customer_company_num"></td>
+            <tr>
+              <th class="divined_line"><span style="color:red;">*</span> 성별</th>
+              <td class="divined_line">
+                <input type="text" class="full_space_inputbox"  name="customer_gender">
+              </td>
+            </tr>
+            <tr>
+              <th><span style="color:red;">*</span> 청구서종류</th>
+              <td>
+                <span><input type="checkbox" name="bill_variation_message" id="bill_variation_message" value="문자 (알림톡)" />&nbsp;<label for="bill_variation_message">문자 (알림톡)</label></span>
+              </td>
+              <th><span style="color:red;">*</span> E-mail</th>
+              <td><input type="text" class="full_space_inputbox" name="customer_mail" required></td></tr>
+            <tr>
+              <th><span style="color:red;">*</span> 주소</th>
+              <td colspan="3"><input type="text" name="customer_address" style="width:80%;height:100%;border:none;border-right:1px solid black;" required><button type="button" id="address_serch_btn" onclick="address_search();" class="btn btn-secondary" style="width:20%;height:100%;">검색</button></td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="table_box">
+          <table class="table table-bordered over_third_table" id="forth_table">
+            <tr>
+              <th colspan="4" class="tableTitle">요금납부</th>
+            </tr>
+            <tr>
+              <th class="divined_line"><span style="color:red;">*</span> 납부자</th>
+              <td class="divined_line"><input type="text" class="full_space_inputbox" name="payer_name" required></td>
+              <th rowspan="2"><span style="color:red;">*</span> <input type="checkbox" name="other_peaple_payment_chk" id="other_peaple_payment_chk" value="ok" />&nbsp;<label for="other_peaple_payment_chk">타인납부 동의</label></th>
+              <td rowspan="2"><input type="text" class="full_space_inputbox" name="consenter" placeholder="동의인" ></td></tr>
+            </tr>
+            <tr>
+              <th class="divined_line"><span style="color:red;">*</span> 납부자와의 관계</th>
+              <td class="divined_line"><input type="text" class="full_space_inputbox" name="payer_relation" required></td>
+            </tr>
+            <tr>
+              <th><span style="color:red;">*</span> 납부자 생년월일<br>(법인/사업자번호)</th>
+              <td><input type="text" class="full_space_inputbox" name="payer_birth" required></td>
+              <th><span style="color:red;">*</span> 납부방법</th>
+              <td><span><input type="checkbox" name="payments_method" id="payments_method" value="은행직접입금 (납부일 25일)" />&nbsp;<label for="payments_method">은행직접입금 (납부일 25일)</label></span></td>
+            </tr>
+            <tr>
+              <th><span style="color:red;">*</span> 입금 은행 명</th>
+              <td>
+                <input type="text"class="full_space_inputbox" name="payment_finance_name" required >
+              </td>
+              <th><span style="color:red;">*</span> 입금 계좌 번호</th>
+              <td>
+                <input type="text" class="full_space_inputbox" name="payment_finance_num" required >
+              </td>
+            </tr>
+            <tr>
+              <th><span style="color:red;">*</span> 납부자(고객)동의</th>
               <td colspan="3">
-                <input type="text" class="full_space_inputbox" name="auto_complete_rate" id="auto_complete_rate" />
-              </td>
-            </tr>
-            <tr>
-              <th>통신망</th>
-              <td>
-                <input type="text" class="full_space_inputbox" value="<%= c_network_data[0].network %>" />
-              </td>
-              <th>계약구분</th>
-              <td>
-                <input type="text" class="full_space_inputbox" value="<%= c_network_data[0].contract_type %>" />
-              </td>
-            </tr>
-            <tr>
-              <th>업무구분</th>
-              <td>
-                <input type="text" class="full_space_inputbox" value="<%= c_network_data[0].contract_work %>" />
-              </td>
-              <th>계통방법</th>
-              <td>
-                <input type="text" class="full_space_inputbox" value="<%= c_network_data[0].open_tel_type %>" />
-              </td>
-            </tr>
-            <tr>
-              <th>고객구분</th>
-              <td>
-                <input type="text" class="full_space_inputbox" value="<%= c_network_data[0].customer_type %>" />
-              </td>
-              <th>방문고객</th>
-              <td>
-                <input type="text" class="full_space_inputbox" value="<%= c_network_data[0].visit_customer %>" />
+                <input type="text" class="full_space_inputbox" name="customer_agree_chk" required>
               </td>
             </tr>
           </table>
+        </div>
 
-          <table class="table table-bordered table_second">
+        <div class="table_box">
+          <table class="table table-bordered over_third_table" id="fifth_table" style="height:200px;">
             <tr>
-              <td colspan="2"><span class="float_left">단월구입비</span><br><span class="float_right">할부 <input type="text" name="installments" value="<%= terminal_purchase_data[0].installments %>" > 개월</span></td>
+              <th colspan="4" class="tableTitle">신청정보</th></tr>
+            <tr>
+            <tr>
+              <th><span style="color:red;">*</span> 모델명</th>
+              <td><input type="text" name="single_model_name" class="full_space_inputbox"></td>
+              <th><span style="color:red;">*</span> 총회선 수량</th>
+              <td><input type="number" name="totla_line_cnt" class="full_space_inputbox"></td>
             </tr>
             <tr>
-              <th>출고가</th>
-              <td><span class="float_right"><input type="text" name="table_second_startPrice" value="<%= terminal_purchase_data[0].initial_price %>"> 원</span></td>
+              <th rowspan="3"><span style="color:red;">*</span> 단말정보</th>
+              <td rowspan="3"><input type="text" name="terminal_info" class="full_space_inputbox" placeholder="일련번호" required ></td>
+              <th rowspan="3"><span style="color:red;">*</span> USIM</th>
+              <td class="divined_line"><input type="text" name="USIM_price" class="full_space_inputbox money_input" placeholder="금액" required ></td>
             </tr>
             <tr>
-              <th rowspan="2">단말할인</th>
-              <td><span class="float_left">지원금</span><br><span class="float_right"><input type="text" name="table_second_supportPrice" value="<%= terminal_purchase_data[0].discount_support %>"> 원</span></td>
+              <td class="divined_line"><input type="text" name="USIM_model_name" class="full_space_inputbox" placeholder="모델명" required ></td>
             </tr>
             <tr>
-              <td><span class="float_left">현금지원가</span><br><span class="float_right"><input type="text" name="table_second_supportPrice_money" value="<%= terminal_purchase_data[0].discount_cash_price %>"> 원</span></td>
+              <td class="divined_line"><input type="text" name="USIM_num" class="full_space_inputbox" placeholder="일련번호" required ></td>
             </tr>
             <tr>
-              <th>할부원금</th>
-              <td><span class="float_right"><input type="text" name="table_second_installments_origin" value="<%= terminal_purchase_data[0].installments_origin %>"> 원</span></td>
-            </tr>
-            <tr>
-              <th>위약금</th>
-              <td><span class="float_right"><input type="text" name="table_second_unpairPrice" value="<%= terminal_purchase_data[0].unpair_price %>"> 원</span></td>
+              <th><span style="color:red;">*</span> 요금제</th>
+              <td>
+                <span><input type="radio" name="join_service_variation" id="join_service_variation_mini" value="알뜰" />&nbsp;<label for="join_service_variation_mini">알뜰</label></span>
+                <span><input type="radio" name="join_service_variation" id="join_service_variation_nomal" value="표준" checked />&nbsp;<label for="join_service_variation_nomal">표준</label></span>
+                <br>
+                <span><input type="radio" name="join_service_variation" id="join_service_variation_expert" value="고급" />&nbsp;<label for="join_service_variation_expert">고급</label></span>
+                <span><input type="radio" name="join_service_variation" id="join_service_variation_premieum" value="프리미엄" />&nbsp;<label for="join_service_variation_premieum">프리미엄</label></span>
+              </td>
+              <th><span style="color:red;">*</span> 부가서비스</th>
+              <td colspan="2"><input type="text" class="full_space_inputbox" name="extra_service" required ></td>
             </tr>
           </table>
+        </div>
 
-          <table class="table table-bordered table_second">
+        <div class="table_box">
+          <table class="table table-bordered over_third_table" id="sixth_table">
             <tr>
-              <td colspan="2"><span class="float_left">회선당 통신요금</span><br><span class="float_right"><span class="float_right"><input type="text" name="line_use_price" value="<%= c_line_usePrice_data[0].line_price %>"> *부가세 포함</span></td>
+              <th colspan="4" class="tableTitle">선박정보</th>
             </tr>
             <tr>
-              <th>요금제</th>
-              <td><input type="text" class="full_space_inputbox" name="table_second_price_model_name" value="<%= c_line_usePrice_data[0].use_type %>" ></td>
+              <th><span style="color:red;">*</span> 선박명</th>
+              <td><input type="text" class="full_space_inputbox" name="ship_name" required></td>
+              <th><span style="color:red;">*</span> 선박번호</th>
+              <td><input type="text" class="full_space_inputbox" name="ship_num" required></td>
             </tr>
             <tr>
-              <th>기본료</th>
-              <td><span class="float_right"><input type="text" name="table_second_nomalPrice" value="<%= c_line_usePrice_data[0].nomal_price %>"> 원</span></td>
+              <th><span style="color:red;">*</span> 총톤수</th>
+              <td><input type="number" name="total_weight" class="float_left" style="width:70%;" required > <span class="float_right">톤</span></td>
+              <th><span style="color:red;">*</span> 선적항</th>
+              <td><input type="text" class="full_space_inputbox" name="port_of_shipment" required></td>
             </tr>
             <tr>
-              <th>요금 할인</th>
-              <td><span class="float_right"><input type="text" name="table_second_discount_type" value="<%= c_line_usePrice_data[0].discount_type %>"> 할인</span><br><br><span class="float_right"><input type="text" name="table_second_discount" value="<%= c_line_usePrice_data[0].discount %>"> 원</span></td>
-            </tr>
-            <tr>
-              <th>월 요금</th>
-              <td><span class="float_right"><input type="text" name="table_second_monthPrice" value="<%= c_line_usePrice_data[0].monthly_price %>"> 원</span></td>
-            </tr>
-            <tr>
-              <th>약정기간</th>
-              <td><span class="float_right"><input type="text" name="table_second_contactPeriod" value="<%= c_line_usePrice_data[0].contract_period %>"> 개월</span></td>
+              <th><span style="color:red;">*</span> 선박종류</th>
+              <td><input type="text" class="full_space_inputbox" name="ship_type" required></td>
+              <th><span style="color:red;">*</span> 항해구역</th>
+              <td><input type="text" name="ship_navigation_area" class="float_left" style="width:70%;" required > <span class="float_right">km</span></td>
             </tr>
           </table>
+        </div>
 
-          <table class="table table-bordered table_second" id="table_second_lastChild">
+        <div class="table_box">
+          <table  class="table table-bordered over_third_table" id="seventh_talbe" >
             <tr>
-              <td colspan="2"><span class="float_left">월 납부액</span><br><span class="float_right" ><input type="text" name="month_price" value="<%= monthly_price_data[0].repeat_monthly_price %>"> *부가세 포함</span></td>
+              <th colspan="4" style="text-align: center;" class="tableTitle">현장작성상세</th>
             </tr>
             <tr>
-              <th>단말 구입비<br><span style="font-size:0.7em;color:gray">(할부이자포함)</span></th>
-              <td><span class="float_right"><input type="text" name="table_second_terminal_price" value="<%= monthly_price_data[0].terminal_price %>">&nbsp;원</span></td>
+              <th>신청서 접수점</th>
+              <td><input type="text" class="full_space_inputbox" name="sales_store_name"></td>
+              <th>판매자</th>
+              <td><input type="text" class="full_space_inputbox" name="sales_people_name" ></td>
             </tr>
             <tr>
-              <th>통신요금<br><span style="font-size:0.7em;color:gray">(기본료-총요금할인)</span></th>
-              <td><span class="float_right"><input type="text" name="table_second_comuPrice" value="<%= monthly_price_data[0].comunication_price %>">&nbsp;원</span></td>
+              <th>연락처</th>
+              <td colspan="3"><input type="text" class="full_space_inputbox" name="applicant_store_call_number"></td>
             </tr>
             <tr>
-              <th>부가서비스</th>
-              <td><span class="float_right"><input type="text" name="table_second_addPrice" value="<%= monthly_price_data[0].other_service_price %>">&nbsp;원</span></td>
+              <th>신청일</th>
+              <td colspan="3"><input type="date" class="full_space_inputbox" name="real_write_contract_date"></td>
             </tr>
             <tr>
-              <th>합계<br><span style="font-size:0.7em;color:gray">(기본료-총요금할인)</span></th>
-              <td><span class="float_right"><input type="text" name="table_second_totalPrice" value="<%= monthly_price_data[0].total_price %>">&nbsp;원</span></td>
-            </tr>
-            <tr>
-              <th>추가 지원금</th>
-              <td><span class="float_right"><input type="text" name="table_second_plusSupportPrice" value="<%= monthly_price_data[0].after_support_price %>">&nbsp;원</span></td>
-            </tr>
-            <tr>
-              <th>총 월 납부액</th>
-              <td><span class="float_right"><input type="text" name="table_second_total_monthlyPrice" value="<%= monthly_price_data[0].total_monthly_price %>">&nbsp;원</span></td>
+              <th><span style="color:red;">*</span> 가입자명(법인명)</th>
+              <td colspan="3"><input type="text" class="full_space_inputbox" name="applicant_name" required></td>
             </tr>
           </table>
-          <p id="table_second_footer"><span class="gray_font">* 위약금 = 지원금 x [약정잔여기간/약정기간(일)]<br>* 단말 할부원금에는 연 5.5%의 할부이자가 부가됩니다</span></p>
+        </div>
 
-          <div class="table_box">
-            <!-- <div class="left_title" style="height:100px;line-height:20px;background-color:cornflowerblue;">고객정보</div> -->
-            <table  class="table table-bordered over_third_table" id="third_table" >
-              <tr>
-                <th rowspan="4" style="text-align: center;">고객정보</th>
-                <th><span style="color:red;">*</span> 고객명(법인명)</th>
-                <td><input type="text" class="full_space_inputbox" name="customer_name" value="<%= customer_detail_data[0].customer_name %>" required></td>
-                <th><span style="color:red;">*</span> 생년월일</th>
-                <td><input type="text" class="full_space_inputbox" name="customer_birth" value="<%= customer_detail_data[0].birth %>" required></td>
-                <th><span style="color:red;">*</span> 성별</th>
-                <td><input type="text" class="full_space_inputbox"  name="customer_gender" value="<%= customer_detail_data[0].gender %>" required></td>
-              </tr>
-              <tr>
-                <th><span style="color:red;">*</span> 연락처</th>
-                <td><input type="text" class="full_space_inputbox" name="customer_phone_num" value="<%= customer_detail_data[0].tel %>" required></td>
-                <th>법인번호</th>
-                <td><input type="text" class="full_space_inputbox" name="customer_company_num" value="<%= customer_detail_data[0].coperation_num %>"></td>
-                <th>E-mail</th>
-                <td><input type="text" class="full_space_inputbox" name="customer_mail" value="<%= customer_detail_data[0].email %>"></td>
-              </tr>
-              <tr>
-                <th><span style="color:red;">*</span> 주소</th>
-                <td colspan="5"><input type="text" class="full_space_inputbox" name="customer_address" value="<%= customer_detail_data[0].address %>" required></td>
-              </tr>
-              <tr>
-                <th><span style="color:red;">*</span> 청구서종류</th>
-                <td colspan="5">
-                  <input type="text" id="bill_variation" class="full_space_inputbox" />
-                </td>
-              </tr>
-            </table>
-          </div>
-
-          <div class="table_box">
-            <table class="table table-bordered over_third_table" id="forth_table">
-              <tr>
-                <th rowspan="4">청구정보</th>
-                <th>자동납부</th>
-                <td colspan="2">
-                  <input type="text" class="auto_payment full_space_inputbox" name="auto_payment" id="auto_payment" value="" />
-                </td>
-              </tr>
-              <tr>
-                <th><span style="color:red;">*</span> 은행/계좌/카드번호</th>
-                <td colspan="2">
-                  <span class="float_left" style="font-weight:bold;">(은행/카드사명)&nbsp;<input type="text" style="width:200px;" name="auto_payment_finance_name" value="<%= payment_detail_data[0].finance_name %>" required ></span>
-                  <span class="float_right" style="font-weight:bold;">(계좌/카드번호)&nbsp;<input type="text" style="width:200px;" name="auto_payment_finance_num" value="<%= payment_detail_data[0].wallet_num %>"  required ></span>
-                </td>
-              </tr>
-              <tr>
-                <th><span style="color:red;">*</span> 예금(카드)주 정보</th>
-                <td colspan="2">
-                  <span class="float_right" style="font-weight:bold;">(생년월일)&nbsp;<input type="text" style="width:10vw;" name="finance_master_birth" value="<%= payment_detail_data[0].auto_payment_user_birth %>"  required >&nbsp;&nbsp;(성명)<input type="text" style="width:10vw;" name="finance_master_name" value="<%= payment_detail_data[0].auto_payment_user_name %>"  required ></span><br><br>
-                  <span class="float_right" style="font-weight:bold;">(유효기간)&nbsp;<input type="text" style="width:10vw;" name="finance_master_valid" value="<%= payment_detail_data[0].auto_payment_user_period %>"  required >&ensp;(가입자와의 관계)&nbsp;<input type="text" style="width:10vw;" name="finance_master_relation" value="<%= payment_detail_data[0].user_relation %>"  required ></span>
-                </td>
-              </tr>
-              <tr>
-                <th>타인납부 동의</th>
-                <td><input type="text" name="auto_payment_other_peaple_chk" id="auto_payment_other_peaple_chk" value="<%= payment_detail_data[0].auto_payment_agree %>" /><br><span style="line-height:10px;color:gray;" class="gray_font">(예금 또는 카드주)은 납부 하여야 할 요금에 대해 별도의 통지 없이 위의 본인의 (카드번호)에서 지정된 출금(결제)일에 인출(결제)되는 것에 동의 합니다.</span></td>
-                <td style="width:300px;background-color:dodgerblue;font-size:1.3em;font-weight:bold;">&ensp;<span style="color:red;">*</span>신청고객 : <input type="text" name="request_name" value="<%= payment_detail_data[0].request_user_name %>"  required></td>
-              </tr>
-            </table>
-          </div>
-
-          <div class="table_box">
-            <table class="table table-bordered over_third_table" id="fifth_table" style="height:200px;">
-              <tr>
-                <th rowspan="4">신청정보</th>
-                <th>가입 서비스명</th>
-                <td colspan="4">
-                  <span><input type="text" name="join_service_variation" id="join_service_variation_mini" value="<%= service_detail_data[0].service_name %>" /></span>
-                </td>
-              </tr>
-              <tr>
-                <th>월 요금</th>
-                <td colspan="4">
-                  <span></spa><input type="text" name="fifth_table_monthly_price" style="width:200px;" value="<%= service_detail_data[0].monthly_price %>" />&nbsp;원</span>
-                </td>
-              </tr>
-              <tr>
-                <th>가입비</th>
-                <td colspan="4">
-                  <span><input type="text" name="join_price" style="width:200px;" value="<%= service_detail_data[0].join_fee %>" >&nbsp;원</span>&emsp13;
-                  <span><input type="text" name="join_price_variation" id="join_price_variation_now" value="<%= service_detail_data[0].join_fee_type %>" /></span>
-                </td>
-              </tr>
-              <tr>
-                <th>단말기모델명</th>
-                <td><input type="text" name="single_model_name" class="full_space_inputbox"  value="<%= service_detail_data[0].terminal_model_name %>" /></td>
-                <th>단말 일련번호 / IMEI</th>
-                <td colspan="2"><input type="text" name="terminal_num_or_IMEI" class="full_space_inputbox"  value="<%= service_detail_data[0].terminal_no_or_IMEI %>" /></td>
-              </tr>
-              <tr>
-                <th>USIM 모델명</th>
-                <td colspan="2"><input type="text" name="USIM_model_name" class="full_space_inputbox" value="<%= service_detail_data[0].usim_model_name %>" /></td>
-                <th>USIM 일련번호</th>
-                <td><input type="text" name="USIM_num" class="full_space_inputbox"  value="<%= service_detail_data[0].usim_no %>" /></td>
-              </tr>
-              <tr>
-                <th>USIM 비용</th>
-                <td colspan="2">
-                  <span><input type="text" name="USIM_price" style="width:200px;" value="<%= service_detail_data[0].usim_price %>" />&nbsp;원</span>
-                  <span><input type="text" name="USIM_price_variation" id="USIM_price_variation" value="<%= service_detail_data[0].usim_price_payment_type %>" /></span>
-                </td>
-                <th>가입 이동전화번호</th>
-                <td colspan="2"><input type="text" class="full_space_inputbox" name="join_phone_num" value="<%= service_detail_data[0].join_tel %>" /></td>
-              </tr>
-            </table>
-          </div>
-
-          <div class="table_box">
-            <table class="table table-bordered over_third_table" id="sixth_table">
-              <tr>
-                <th rowspan="4">비고</th>
-                <th>영업담당자</th>
-                <td><input type="text" class="full_space_inputbox" name="sales_people_name" value="<%= other_information_data[0].main_manager %>" /></td>
-                <th>대리점명</th>
-                <td><input type="text" class="full_space_inputbox" name="sales_store_name" value="<%= other_information_data[0].contract_store %>" /></td>
-              </tr>
-              <tr>
-                <th>선박번호</th>
-                <td><input type="text" class="full_space_inputbox" name="ship_num" value="<%= other_information_data[0].ship_no %>"></td>
-                <th>선박명</th>
-                <td><input type="text" class="full_space_inputbox" name="ship_name" value="<%= other_information_data[0].ship_name %>"></td>
-              </tr>
-              <tr rowspan="2">
-                <td colspan="4" style="padding-left:10px;height:100px;"><%= other_information_data[0].note %></td>
-              </tr>
-            </table>
-          </div>
-
-          <div class="table_box">
-            <!-- <div class="left_title" style="height:100px;line-height:20px;background-color:cornflowerblue;">고객정보</div> -->
-            <table  class="table table-bordered over_third_table" id="third_table" >
-              <tr>
-                <th rowspan="4" style="text-align: center;">현장작성상세</th>
-                <th><span style="color:red;">*</span> 신청일</th>
-                <td colspan="3"><input type="text" class="full_space_inputbox" name="real_write_contract_date" value="<%= applicant_detail_data[0].real_write_contract_date %>" required></td>
-                <th><span style="color:red;">*</span> 신청자(대리인)</th>
-                <td><input type="text" class="full_space_inputbox" name="applicant_name" value="<%= applicant_detail_data[0].applicant_name %>" required></td>
-              </tr>
-              <tr>
-                <th>신청접수점</th>
-                <td><input type="text" class="full_space_inputbox" name="applicant_store" value="<%= applicant_detail_data[0].applicant_store %>" /></td>
-                <th>판매자</th>
-                <td><input type="text" class="full_space_inputbox" name="applicant_sales_man_name" value="<%= applicant_detail_data[0].applicant_sales_man_name %>"></td>
-                <th>연락처</th>
-                <td><input type="text" class="full_space_inputbox" name="applicant_store_call_number" value="<%= applicant_detail_data[0].applicant_store_call_number %>"></td>
-              </tr>
-            </table>
-          </div>
-
-          <div class="table_box">
-            <table class="table table-bordered over_third_table" id="third_table">
-              <tr>
-                <th>첨부</th>
-                <td>
-                  <% attached_file_data.forEach(function(row) { %>
-                    <a href="<%= row.file_dir %>/<%= row.file_name %>" style="color:cornflowerblue;" ><%= row.file_name %>&emsp;&emsp;&emsp;&emsp;&emsp;<%= row.file_size %> MB</a><br>
-                  <% }) %>
-                  <% if(attached_file_data.length<1){%>
-                    <span>첨부없음</span>
-                  <%}%>
-                </td>
-              </tr>
-            </table>
-          </div>
+        <div class="table_box">
+          <table class="table table-bordered over_third_table" id="eighth_table">
+            <tr>
+              <th>첨부</th>
+              <td>
+                <% attached_file_data.forEach(function(row) { %>
+                  <a href="<%=server_url %>/download_contract_attach_file?file_name=<%= row.file_name %>" style="color:cornflowerblue;" ><%= row.file_name %>&emsp;&emsp;&emsp;&emsp;&emsp;<%= row.file_size %> MB</a><br>
+                <% }) %>
+                <% if(attached_file_data.length<1){%>
+                  <span>첨부없음</span>
+                <%}%>
+              </td>
+            </tr>
+          </table>
+        </div>
       </div>
       <%- include("../footer.ejs") %>
     </div>
@@ -327,53 +317,96 @@
   <%- include('../include_script.ejs') %>
 
   <script>
-    let auto_complete_list;
     window.onload = function(){
       $('input').attr('autocomplete','off');
       $('input').attr('disabled','on');
-      bill_variation_chk();
-      auto_payment_chk();
-      auto_complete_rate_insert();
+      $('input[type="radio"]').attr('disabled',false);
+      $('input[type="checkbox"]').attr('disabled',false);
+      $('input').css('color','blue');
+      $('input').css('background-color', 'rgb(248, 238, 238)');
+      $('input').css('border','none');
+      $('select').attr('disabled','on');
+      $('select').css('color','blue');
+      
+      input_data();
     }
 
-    function bill_variation_chk(){
-      let bill_variation_chk = false;
-      let bill_type = "<%= customer_detail_data[0].bill_type %>";
-      let chk_count = 0;
+    function input_data(){
+      $('input:radio[name="contact_variation"]').attr("checked", false);
+      $('input:radio[name="contact_variation"][value="<%= basic_information_data[0].contract_type %>"]').attr("checked", true);
+      $('input:radio[name="contact_variation"]').attr("onclick","return false;");
+      
+      $('input:radio[name="connect_variation"]').attr("checked", false);
+      $('input:radio[name="connect_variation"][value="<%= basic_information_data[0].open_tel_type %>"]').attr("checked", true);
+      $('input:radio[name="connect_variation"]').attr("onclick","return false;");
 
-      if(bill_type.indexOf('mail')>0){
-        $('#bill_variation').val('E-mail');
-        chk_count = 1;
-      } 
+      $('input:radio[name="customer_variation"]').attr("checked", false);
+      $('input:radio[name="customer_variation"][value="<%= basic_information_data[0].customer_type %>"]').attr("checked", true);
+      $('input:radio[name="customer_variation"]').attr("onclick","return false;");
 
-      if(bill_type.indexOf('message')>0){
-        if(chk_count == 0){
-          $('#bill_variation').val('문자');
-          chk_count = 1;
-        } else {
-          $('#bill_variation').val($('#bill_variation').val()+', 문자');
-        }
-      } 
+      $('#auto_complete_rate').val("<%= auto_complete_value_data[0].list_name %>");
+      $('#agreement_period option[value="<%= basic_information_data[0].agreement_period %>"]').attr("selected", true);
 
-      if(bill_type.indexOf('alram')>0){
-        if(chk_count == 0){
-          $('#bill_variation').val('알림톡');
-          chk_count = 1;
-        } else {
-          $('#bill_variation').val($('#bill_variation').val()+', 알림톡');
-        }
-      } 
+      $('input[name="table_second_startPrice"]').val('<%= monthly_price_data[0].start_price %>');
+      $('input[name="table_second_supportPrice"]').val('<%= monthly_price_data[0].support_price %>');
+      $('input[name="table_second_installments_origin"]').val('<%= monthly_price_data[0].installments_origin %>');
+      $('input[name="table_second_installments_period"]').val('<%= monthly_price_data[0].installments_period %>');
+      $('input[name="table_second_monthly_installments"]').val('<%= monthly_price_data[0].monthly_installments %>');
+      $('input[name="table_second_installments_commission"]').val('<%= monthly_price_data[0].installments_commission %>');
 
-      if(bill_type.indexOf('post')>0){
-        if(chk_count == 0){
-          $('#bill_variation').val('우편');
-          chk_count = 1;
-        } else {
-          $('#bill_variation').val($('#bill_variation').val()+', 우편');
-        }
-      }
+      $('input[name="table_second_monthlyPrice"]').val('<%= monthly_price_data[0].monthly_price %>');
+      $('input[name="table_second_monthlyDiscount"]').val('<%= monthly_price_data[0].monthly_discount %>');
+      $('input[name="table_second_monthlyPayments"]').val('<%= monthly_price_data[0].monthly_payments %>');
+      
+      $('input[name="table_second_total_monthlyPrice"]').val('<%= monthly_price_data[0].total_monthly_price %>');
+
+      $('input[name="customer_name"]').val('<%= customer_detail_data[0].customer_name %>');
+      $('input[name="customer_phone_num"]').val('<%= customer_detail_data[0].tel %>');
+      $('input[name="customer_birth"]').val('<%= customer_detail_data[0].birth %>');
+      $('input[name="customer_company_num"]').val('<%= customer_detail_data[0].coperation_num %>');
+      $('input[name="customer_gender"]').val('<%= customer_detail_data[0].gender %>');
+      $('input[name="bill_variation_message"][value="<%= customer_detail_data[0].bill_type %>"]').attr("checked", true);
+      $('input[name="bill_variation_message"]').attr("onclick","return false;");
+      $('input[name="customer_mail"]').val('<%= customer_detail_data[0].email %>');
+      $('input[name="customer_address"]').val('<%= customer_detail_data[0].address %>');
+
+      $('input[name="payer_name"]').val('<%= payment_detail_data[0].payer_name %>');
+      $('input[name="other_peaple_payment_chk"][value="<%= payment_detail_data[0].other_people_payment_agree %>"]').attr("checked", true);
+      $('input[name="other_peaple_payment_chk"]').attr("onclick","return false;");
+      $('input[name="consenter"]').val('<%= payment_detail_data[0].consenter %>');
+      $('input[name="payer_relation"]').val('<%= payment_detail_data[0].payer_relation %>');
+      $('input[name="payer_birth"]').val('<%= payment_detail_data[0].payer_birth %>');
+      $('input[name="payments_method"][value="<%= payment_detail_data[0].payments_method %>"]').attr("checked", true);
+      $('input[name="payments_method"]').attr("onclick","return false;");
+      $('input[name="payment_finance_name"]').val('<%= payment_detail_data[0].finance_name %>');
+      $('input[name="payment_finance_num"]').val('<%= payment_detail_data[0].wallet_num %>');
+      $('input[name="customer_agree_chk"]').val('<%= payment_detail_data[0].customer_agree %>');
+      
+      $('input[name="single_model_name"]').val('<%= service_detail_data[0].terminal_model_name %>');
+      $('input[name="totla_line_cnt"]').val('<%= service_detail_data[0].line_cnt %>');
+      $('input[name="terminal_info"]').val('<%= service_detail_data[0].terminal_no_or_IMEI %>');
+      $('input[name="USIM_price"]').val('<%= service_detail_data[0].usim_price %>');
+      $('input[name="USIM_model_name"]').val('<%= service_detail_data[0].usim_model_name %>');
+      $('input[name="USIM_num"]').val('<%= service_detail_data[0].usim_no %>');
+      $('input:radio[name="join_service_variation"]').attr("checked", false);
+      $('input:radio[name="join_service_variation"][value="<%= service_detail_data[0].join_fee_type %>"]').attr("checked", true);
+      $('input:radio[name="join_service_variation"]').attr("onclick","return false;");
+      $('input[name="extra_service"]').val('<%= service_detail_data[0].extra_service %>');
+      
+      $('input[name="ship_name"]').val('<%= ship_information_data[0].ship_name %>');
+      $('input[name="ship_num"]').val('<%= ship_information_data[0].ship_no %>');
+      $('input[name="total_weight"]').val('<%= ship_information_data[0].total_weight %>');
+      $('input[name="port_of_shipment"]').val('<%= ship_information_data[0].port_of_shipment %>');
+      $('input[name="ship_type"]').val('<%= ship_information_data[0].ship_type %>');
+      $('input[name="ship_navigation_area"]').val('<%= ship_information_data[0].ship_navigation_area %>');
+      
+      $('input[name="sales_store_name"]').val('<%= applicant_detail_data[0].applicant_store %>');
+      $('input[name="sales_people_name"]').val('<%= applicant_detail_data[0].applicant_sales_man_name %>');
+      $('input[name="applicant_store_call_number"]').val('<%= applicant_detail_data[0].applicant_store_call_number %>');
+      $('input[name="real_write_contract_date"]').val('<%= applicant_detail_data[0].real_write_contract_date %>');
+      $('input[name="applicant_name"]').val('<%= applicant_detail_data[0].applicant_name %>');
     }
-
+    
     function auto_payment_chk(){
       let auto_payment_chk = "<%= payment_detail_data[0].auto_payment %>";
       let auto_payment_result;
@@ -382,35 +415,6 @@
       } else {
         $('#auto_payment').val("신청안함");
       }
-    }
-
-    $('#contract_delete').click(function(){
-      let confirm_result = confirm("정말로 이 계약서를 지우시겠습니까?");
-      if(confirm_result){
-        location.replace("<%= server_url %>/delete_lte_contract?main_idx=<%= main_idx %>");
-      }
-    });
-
-    function auto_complete_rate_insert(){
-      $.ajax({
-          type: "GET",
-          url: '<%= server_url %>/get_auto_complete_list_json',
-          dataType: "JSON",
-          success: function (result) {
-            for(var key in result){
-              if(Number('<%= contract_before_idx_list.auto_complete_list_idx %>') == 0){
-                $('input[name="auto_complete_rate"]').val("");
-                break;
-              } else if(Number(result[key].idx) == Number('<%= contract_before_idx_list.auto_complete_list_idx %>')){
-                $('input[name="auto_complete_rate"]').val(result[key].list_name);
-                break;
-              }
-            };
-          },
-          error: function(err){
-            console.log(err);
-          }
-      });
     }
   </script>
 </html>

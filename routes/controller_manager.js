@@ -3,9 +3,6 @@ const mysql_select_query = require("../models/mysql_select_query.js");
 const mysql_updel_query = require("../models/mysql_updel_query.js");
 const permission_chk = require("../models/permission_chk.js");
 require('dotenv').config();
-const qs = require('querystring');
-const crypto = require('crypto');
-const { render } = require("ejs");
 const server_url = process.env.SERVER_HOST+":"+process.env.SERVER_PORT;
 
 module.exports = {
@@ -23,7 +20,7 @@ module.exports = {
             return;
         }
 
-        res.render("../views/manager/lte_contract_list_manager.ejs", {server_url: server_url, page_name: 'lte_contract_list_manager', user_rank: req.session.user_rank, user_id: req.session.user_id});
+        res.render("manager/lte_contract_list_manager", {server_url: server_url, page_name: 'lte_contract_list_manager', user_rank: req.session.user_rank, user_id: req.session.user_id});
     },
     chart_check: async function(req,res){
         let result = "";
@@ -39,7 +36,7 @@ module.exports = {
             res.send("잘못된 접근입니다.");
             return;
         }
-        res.render("../views/manager/chart_check.ejs", {result: result, server_url: server_url, page_name: 'chart_check', user_id: req.session.user_id, user_rank: req.session.user_rank});
+        res.render("manager/chart_check", {result: result, server_url: server_url, page_name: 'chart_check', user_id: req.session.user_id, user_rank: req.session.user_rank});
     },
     form_insert_auto_complete_list: async function(req, res){
         let result = "";
@@ -55,7 +52,7 @@ module.exports = {
             res.send("잘못된 접근입니다.");
             return;
         }
-        res.render("../views/manager/form_insert_auto_complete_list.ejs", {result: result, server_url: server_url, page_name: 'form_insert_auto_complete_list', user_id: req.session.user_id, user_rank: req.session.user_rank});
+        res.render("manager/form_insert_auto_complete_list", {result: result, server_url: server_url, page_name: 'form_insert_auto_complete_list', user_id: req.session.user_id, user_rank: req.session.user_rank});
     },
     insert_auto_complete_list: async function(req, res){
         // login_chk

@@ -16,7 +16,7 @@
 
 @media (max-width: 1000px) {
     #wrapper{
-        min-width:700px;
+        min-width:1000px;
     }
     #contents_space{
         width: 100%;

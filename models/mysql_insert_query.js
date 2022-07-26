@@ -15,11 +15,11 @@ module.exports = {
             })
         })
     },
-    insert_contract_main: function(auto_complete_list_idx, c_network_detail_idx, terminal_purchase_idx, c_line_usePrice_idx, monthly_price_idx, customer_detail_idx, payment_detail_idx, service_detail_idx, other_information_idx, applicant_detail_idx, attached_file_flag, user_id){
+    insert_contract_main: function(auto_complete_list_idx, basic_information_idx, monthly_price_idx, customer_detail_idx, payment_detail_idx, service_detail_idx, ship_information_idx, applicant_detail_idx, attached_file_flag, user_id){
         return new Promise (function(response, reject){
-            let sql = 'INSERT INTO `'+process.env.MYSQL_DATABASE+'`.`contract`(`auto_complete_list_idx`,`c_network_idx`,`terminal_purchase_idx`,`c_line_usePrice_idx`,`monthly_price_idx`,`customer_detail_idx`,`payment_detail_idx`,`service_detail_idx`,`other_information_idx`,`applicant_detail_idx`,`attached_file_flag`,`create_user`) ';
-            sql = sql + 'VALUES(?, ? ,? ,? ,? ,? ,? ,? ,? ,? ,?, ?)';
-            let params = [auto_complete_list_idx, c_network_detail_idx, terminal_purchase_idx, c_line_usePrice_idx, monthly_price_idx, customer_detail_idx, payment_detail_idx, service_detail_idx, other_information_idx, applicant_detail_idx, attached_file_flag, user_id];
+            let sql = 'INSERT INTO `'+process.env.MYSQL_DATABASE+'`.`contract`(`auto_complete_list_idx`,`basic_information_idx`,`monthly_price_idx`,`customer_detail_idx`,`payment_detail_idx`,`service_detail_idx`,`ship_information_idx`,`applicant_detail_idx`,`attached_file_flag`,`create_user`) ';
+            sql = sql + 'VALUES(?, ?, ?, ? ,? ,? ,? ,? ,?, ?)';
+            let params = [auto_complete_list_idx, basic_information_idx, monthly_price_idx, customer_detail_idx, payment_detail_idx, service_detail_idx, ship_information_idx, applicant_detail_idx, attached_file_flag, user_id];
             mysqlConn.query(sql, params,function(err, data){
                 if(!err){
                     response('OK');
@@ -30,11 +30,11 @@ module.exports = {
             })
         })
     },
-    insert_contract_log_main: function(origin_idx, auto_complete_list_idx, c_network_detail_idx, terminal_purchase_idx, c_line_usePrice_idx, monthly_price_idx, customer_detail_idx, payment_detail_idx, service_detail_idx, other_information_idx, applicant_detail_idx, attached_file_flag, attached_file_idx_list, create_user_id, modify_user, origin_modDate){
+    insert_contract_log_main: function(origin_idx, auto_complete_list_idx, basic_information_idx, monthly_price_idx, customer_detail_idx, payment_detail_idx, service_detail_idx, ship_information_idx, applicant_detail_idx, attached_file_flag, attached_file_idx_list, create_user_id, modify_user, origin_modDate){
         return new Promise (function(response, reject){
-            let sql = 'INSERT INTO `'+process.env.MYSQL_DATABASE+'`.`contract_before_log`(`origin_idx`,`auto_complete_list_idx`,`c_network_idx`,`terminal_purchase_idx`,`c_line_usePrice_idx`,`monthly_price_idx`,`customer_detail_idx`,`payment_detail_idx`,`service_detail_idx`,`other_information_idx`,`applicant_detail_idx`,`attached_file_flag`,`attached_file_idx_list`,`create_user`,`modify_user`,`origin_modDate`) ';
-            sql = sql + 'VALUES(? ,? ,? ,? ,? ,? ,? ,? ,?, ?, ?, ?, ?, ? ,?, ?)';
-            let params = [origin_idx, auto_complete_list_idx, c_network_detail_idx, terminal_purchase_idx, c_line_usePrice_idx, monthly_price_idx, customer_detail_idx, payment_detail_idx, service_detail_idx, other_information_idx, applicant_detail_idx, attached_file_flag, attached_file_idx_list, create_user_id, modify_user, origin_modDate];
+            let sql = 'INSERT INTO `'+process.env.MYSQL_DATABASE+'`.`contract_before_log`(`origin_idx`,`auto_complete_list_idx`,`basic_information_idx`,`monthly_price_idx`,`customer_detail_idx`,`payment_detail_idx`,`service_detail_idx`,`ship_information_idx`,`applicant_detail_idx`,`attached_file_flag`,`attached_file_idx_list`,`create_user`,`modify_user`,`origin_modDate`) ';
+            sql = sql + 'VALUES(? ,? ,? ,? ,? ,? ,? ,? ,?, ?, ?, ?, ?, ?)';
+            let params = [origin_idx, auto_complete_list_idx, basic_information_idx, monthly_price_idx, customer_detail_idx, payment_detail_idx, service_detail_idx, ship_information_idx, applicant_detail_idx, attached_file_flag, attached_file_idx_list, create_user_id, modify_user, origin_modDate];
             mysqlConn.query(sql, params,function(err, data){
                 if(!err){
                     response('OK');
@@ -45,16 +45,14 @@ module.exports = {
             })
         })
     },
-    insert_contract_c_network: function(network, contract_type, contract_work, open_tel_type, customer_type, visit_customer, main_idx){
+    insert_contract_basic_information: function(contract_type, open_tel_type, customer_type, agreement_period, main_idx){
         return new Promise (function(response, reject){
-            let network_value = (network=="" ? null:network);
             let contract_type_value = (contract_type=="" ? null:contract_type);
-            let contract_work_value = (contract_work=="" ? null:contract_work);
             let open_tel_type_value = (open_tel_type=="" ? null:open_tel_type);
             let customer_type_value = (customer_type=="" ? null:customer_type);
-            let visit_customer_value = (visit_customer=="" ? null:visit_customer);
-            let sql = 'INSERT INTO `'+process.env.MYSQL_DATABASE+'`.`c_network`(`network`,`contract_type`,`contract_work`,`open_tel_type`,`customer_type`,`visit_customer`,`main_idx`) VALUES(?, ?, ?, ?, ?, ?,"'+main_idx+'")';
-            let params = [network_value, contract_type_value, contract_work_value, open_tel_type_value, customer_type_value, visit_customer_value];
+            let agreement_period_value = (agreement_period=="" ? null:agreement_period);
+            let sql = 'INSERT INTO `'+process.env.MYSQL_DATABASE+'`.`basic_information`(`contract_type`,`open_tel_type`,`customer_type`,`agreement_period`,`main_idx`) VALUES(?, ?, ?, ?, ?)';
+            let params = [contract_type_value, open_tel_type_value, customer_type_value, agreement_period_value, main_idx];
 
             mysqlConn.query(sql, params, function(err, data){
                 if(!err){
@@ -66,6 +64,8 @@ module.exports = {
             })
         })
     },
+
+    /*
     insert_contract_Terminal_purchase: function(installments, initial_price, discount_support, discount_cash_price, installments_origin, unpair_price, main_idx){
         return new Promise (function(response, reject){
             let installments_value = (installments=="" ? null:installments);
@@ -112,19 +112,23 @@ module.exports = {
             })
         })
     },
-    insert_contract_monthly_price: function(repeat_monthly_price, terminal_price, comunication_price, other_service_price, total_price, after_support_price, total_monthly_price, main_idx){
+    */
+    insert_contract_monthly_price: function(start_price, support_price, installments_origin, installments_period, monthly_installments, installments_commission, monthly_price, monthly_discount, monthly_payments, total_monthly_price, main_idx){
         return new Promise (function(response, reject){
-            let repeat_monthly_price_value = (repeat_monthly_price=="" ? null:repeat_monthly_price);
-            let terminal_price_value = (terminal_price=="" ? null:terminal_price);
-            let comunication_price_value = (comunication_price=="" ? null:comunication_price);
-            let other_service_price_value = (other_service_price=="" ? null:other_service_price);
-            let total_price_value = (total_price=="" ? null:total_price);
-            let after_support_price_value = (after_support_price=="" ? null:after_support_price);
+            let start_price_value = (start_price=="" ? null:start_price);
+            let support_price_value = (support_price=="" ? null:support_price);
+            let installments_origin_value = (installments_origin=="" ? null:installments_origin);
+            let installments_period_value = (installments_period=="" ? null:installments_period);
+            let monthly_installments_value = (monthly_installments=="" ? null:monthly_installments);
+            let installments_commission_value = (installments_commission=="" ? null:installments_commission);
+            let monthly_price_value = (monthly_price=="" ? null:monthly_price);
+            let monthly_discount_value = (monthly_discount=="" ? null:monthly_discount);
+            let monthly_payments_value = (monthly_payments=="" ? null:monthly_payments);
             let total_monthly_price_value = (total_monthly_price=="" ? null:total_monthly_price);
 
-            let sql = 'INSERT INTO `'+process.env.MYSQL_DATABASE+'`.`monthly_price`(`repeat_monthly_price`,`terminal_price`,`comunication_price`,`other_service_price`,`total_price`,`after_support_price`,`total_monthly_price`,`main_idx`) ';
-            sql = sql + 'VALUES(?, ?, ?, ?, ?, ?, ?, "'+main_idx+'")';
-            let params = [repeat_monthly_price_value, terminal_price_value, comunication_price_value, other_service_price_value, total_price_value, after_support_price_value, total_monthly_price_value];
+            let sql = 'INSERT INTO `'+process.env.MYSQL_DATABASE+'`.`monthly_price`(`start_price`,`support_price`,`installments_origin`,`installments_period`,`monthly_installments`,`installments_commission`,`monthly_price`,`monthly_discount`,`monthly_payments`,`total_monthly_price`,`main_idx`) ';
+            sql = sql + 'VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+            let params = [start_price_value, support_price_value, installments_origin_value, installments_period_value, monthly_installments_value, installments_commission_value, monthly_price_value, monthly_discount_value, monthly_payments_value, total_monthly_price_value, main_idx];
             mysqlConn.query(sql, params, function(err, data){
                 if(!err){
                     response('OK');
@@ -135,20 +139,20 @@ module.exports = {
             })
         })
     },
-    insert_contract_customer_detail: function(customer_name, birth, gender, tel, coperation_num, email, address, bill_type, main_idx){
+    insert_contract_customer_detail: function(customer_name, tel, birth, gender, coperation_num, bill_type, email, address, main_idx){
         return new Promise (function(response, reject){
             let customer_name_value = (customer_name=="" ? null:customer_name);
+            let tel_value = (tel=="" ? null:tel);
             let birth_value = (birth=="" ? null:birth);
             let gender_value = (gender=="" ? null:gender);
-            let tel_value = (tel=="" ? null:tel);
             let coperation_num_value = (coperation_num=="" ? null:coperation_num);
+            let bill_type_value = (bill_type=="" ? null:bill_type);
             let email_value = (email=="" ? null:email);
             let address_value = (address=="" ? null:address);
-            let bill_type_value = (bill_type=="" ? null:bill_type);
 
-            let sql = 'INSERT INTO `'+process.env.MYSQL_DATABASE+'`.`customer_detail`(`customer_name`,`birth`,`gender`,`tel`,`coperation_num`,`email`,`address`,`bill_type`,`main_idx`) ';
-            sql = sql + 'VALUES(?, ?, ?, ?, ?, ?, ?, ?,"'+main_idx+'")';
-            let params = [customer_name_value, birth_value, gender_value, tel_value, coperation_num_value, email_value, address_value, bill_type_value];
+            let sql = 'INSERT INTO `'+process.env.MYSQL_DATABASE+'`.`customer_detail`(`customer_name`,`tel`,`birth`,`gender`,`coperation_num`,`bill_type`,`email`,`address`,`main_idx`) ';
+            sql = sql + 'VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)';
+            let params = [customer_name_value, tel_value, birth_value, gender_value, coperation_num_value, bill_type_value, email_value, address_value, main_idx];
             mysqlConn.query(sql, params, function(err, data){
                 if(!err){
                     response('OK');
@@ -159,27 +163,21 @@ module.exports = {
             })
         })
     },
-    insert_contract_payment_detail: function(auto_payment, auto_payment_type, finance_name, wallet_num, auto_payment_user_birth, auto_payment_user_name, auto_payment_user_period, user_relation, auto_payment_agree, request_user_name, main_idx){
+    insert_contract_payment_detail: function(payer_name, payer_relation, other_people_payment_agree, consenter, payer_birth, payments_method, finance_name, wallet_num, customer_agree, main_idx){
         return new Promise (function(response, reject){
-            let auto_payment_value = (auto_payment==null ? "no":auto_payment);
-            auto_payment_value = (auto_payment=="" ? "no":auto_payment);
-            let auto_payment_type_value = (auto_payment_type=="" ? null:auto_payment_type);
-            if(auto_payment_value == "no" || auto_payment_value == null){
-                auto_payment_type_value = null;
-            }
-            let finance_name_value = (finance_name=="" ? null:finance_name);
-            let wallet_num_value = (wallet_num=="" ? null:wallet_num);
-            let auto_payment_user_birth_value = (auto_payment_user_birth=="" ? null:auto_payment_user_birth);
-            let auto_payment_user_name_value = (auto_payment_user_name=="" ? null:auto_payment_user_name);
-            let auto_payment_user_period_value = (auto_payment_user_period=="" ? null:auto_payment_user_period);
-            let user_relation_value = (user_relation=="" ? null:user_relation);
-            let auto_payment_agree_value = (auto_payment_agree=="" ? "no":auto_payment_agree);
-            auto_payment_agree_value = (auto_payment_agree==null ? "no":auto_payment_agree);
-            let request_user_name_value = (request_user_name=="" ? null:request_user_name);
+            let payer_name_value = (payer_name==null ? "no":payer_name);
+            let payer_relation_value = (payer_relation==null ? "no":payer_relation);
+            let other_people_payment_agree_value = (other_people_payment_agree==null ? "no":other_people_payment_agree);
+            let consenter_value = (consenter==null ? "no":consenter);
+            let payer_birth_value = (payer_birth==null ? "no":payer_birth);
+            let payments_method_value = (payments_method==null ? "no":payments_method);
+            let finance_name_value = (finance_name==null ? "no":finance_name);
+            let wallet_num_value = (wallet_num==null ? "no":wallet_num);
+            let customer_agree_value = (customer_agree==null ? "no":customer_agree);
 
-            let sql = 'INSERT INTO `'+process.env.MYSQL_DATABASE+'`.`payment_detail`(`auto_payment`,`auto_payment_type`,`finance_name`,`wallet_num`,`auto_payment_user_birth`,`auto_payment_user_name`,`auto_payment_user_period`,`user_relation`,`auto_payment_agree`,`request_user_name`,`main_idx`) ';
-            sql = sql + 'VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?,"'+main_idx+'")';
-            let params = [auto_payment_value, auto_payment_type_value, finance_name_value, wallet_num_value, auto_payment_user_birth_value, auto_payment_user_name_value, auto_payment_user_period_value, user_relation_value, auto_payment_agree_value, request_user_name_value];
+            let sql = 'INSERT INTO `'+process.env.MYSQL_DATABASE+'`.`payment_detail`(`payer_name`,`payer_relation`,`other_people_payment_agree`,`consenter`,`payer_birth`,`payments_method`,`finance_name`,`wallet_num`,`customer_agree`,`main_idx`) ';
+            sql = sql + 'VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+            let params = [payer_name_value, payer_relation_value, other_people_payment_agree_value, consenter_value, payer_birth_value, payments_method_value, finance_name_value, wallet_num_value, customer_agree_value, main_idx];
 
             mysqlConn.query(sql, params, function(err, data){
                 if(!err){
@@ -191,23 +189,20 @@ module.exports = {
             })
         })
     },
-    insert_contract_service_detail: function(service_name, monthly_price, join_fee, join_fee_type, terminal_model_name, terminal_no_or_IMEI, usim_model_name, usim_no, usim_price, usim_price_payment_type, join_tel, main_idx){
+    insert_contract_service_detail: function(terminal_model_name, line_cnt, terminal_no_or_IMEI, usim_price, usim_model_name, usim_no, join_fee_type, extra_service, main_idx){
         return new Promise (function(response, reject){
-            let service_name_value = (service_name=="" ? null:service_name);
-            let monthly_price_value = (monthly_price=="" ? null:monthly_price);
-            let join_fee_value = (join_fee=="" ? null:join_fee);
-            let join_fee_type_value = (join_fee_type=="" ? null:join_fee_type);
             let terminal_model_name_value = (terminal_model_name=="" ? null:terminal_model_name);
+            let line_cnt_value = (line_cnt=="" ? null:line_cnt);
             let terminal_no_or_IMEI_value = (terminal_no_or_IMEI=="" ? null:terminal_no_or_IMEI);
+            let usim_price_value = (usim_price=="" ? null:usim_price);
             let usim_model_name_value = (usim_model_name=="" ? null:usim_model_name);
             let usim_no_value = (usim_no=="" ? null:usim_no);
-            let usim_price_value = (usim_price=="" ? null:usim_price);
-            let usim_price_payment_type_value = (usim_price_payment_type=="" ? null:usim_price_payment_type);
-            let join_tel_value = (join_tel=="" ? null:join_tel);
+            let join_fee_type_value = (join_fee_type=="" ? null:join_fee_type);
+            let extra_service_value = (extra_service=="" ? null:extra_service);
 
-            let sql = 'INSERT INTO `'+process.env.MYSQL_DATABASE+'`.`service_detail`(`service_name`,`monthly_price`,`join_fee`,`join_fee_type`,`terminal_model_name`,`terminal_no_or_IMEI`,`usim_model_name`,`usim_no`,`usim_price`,`usim_price_payment_type`,`join_tel`,`main_idx`) ';
-            sql = sql + 'VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,"'+main_idx+'")';
-            let params = [service_name_value, monthly_price_value, join_fee_value, join_fee_type_value, terminal_model_name_value, terminal_no_or_IMEI_value, usim_model_name_value, usim_no_value, usim_price_value, usim_price_payment_type_value, join_tel_value];
+            let sql = 'INSERT INTO `'+process.env.MYSQL_DATABASE+'`.`service_detail`(`terminal_model_name`,`line_cnt`,`terminal_no_or_IMEI`,`usim_price`,`usim_model_name`,`usim_no`,`join_fee_type`,`extra_service`,`main_idx`) ';
+            sql = sql + 'VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)';
+            let params = [terminal_model_name_value, line_cnt_value, terminal_no_or_IMEI_value, usim_price_value, usim_model_name_value, usim_no_value, join_fee_type_value, extra_service_value, main_idx];
             mysqlConn.query(sql, params, function(err, data){
                 if(!err){
                     response('OK');
@@ -218,17 +213,18 @@ module.exports = {
             })
         })
     },
-    insert_contract_other_information: function(main_manager, contract_store, ship_no, ship_name, note, main_idx){
+    insert_contract_ship_information: function(ship_name, ship_no, total_weight, port_of_shipment, ship_type, ship_navigation_area, main_idx){
         return new Promise (function(response, reject){
-            let main_manager_value = (main_manager=="" ? null:main_manager);
-            let contract_store_value = (contract_store=="" ? null:contract_store);
-            let ship_no_value = (ship_no=="" ? null:ship_no);
             let ship_name_value = (ship_name=="" ? null:ship_name);
-            let note_value = (note=="" ? null:note);
+            let ship_no_value = (ship_no=="" ? null:ship_no);
+            let total_weight_value = (total_weight=="" ? null:total_weight);
+            let port_of_shipment_value = (port_of_shipment=="" ? null:port_of_shipment);
+            let ship_type_value = (ship_type=="" ? null:ship_type);
+            let ship_navigation_area_value = (ship_navigation_area=="" ? null:ship_navigation_area);
 
-            let sql = 'INSERT INTO `'+process.env.MYSQL_DATABASE+'`.`other_information`(`main_manager`,`contract_store`,`ship_no`,`ship_name`,`note`,`main_idx`) ';
-            sql = sql + 'VALUES(?, ?, ?, ?, ?,"'+main_idx+'")';
-            let params = [main_manager_value, contract_store_value, ship_no_value, ship_name_value, note_value];
+            let sql = 'INSERT INTO `'+process.env.MYSQL_DATABASE+'`.`ship_information`(`ship_name`,`ship_no`,`total_weight`,`port_of_shipment`,`ship_type`,`ship_navigation_area`,`main_idx`) ';
+            sql = sql + 'VALUES(?, ?, ?, ?, ?, ?, ?)';
+            let params = [ship_name_value, ship_no_value, total_weight_value, port_of_shipment_value, ship_type_value, ship_navigation_area_value, main_idx];
             mysqlConn.query(sql, params, function(err, data){
                 if(!err){
                     response('OK');
@@ -239,17 +235,17 @@ module.exports = {
             })
         })
     },
-    insert_contract_applicant_detail: function(real_write_contract_date, applicant_name, applicant_store, applicant_sales_man_name, applicant_store_call_number, main_idx){
+    insert_contract_applicant_detail: function(applicant_store, applicant_sales_man_name, applicant_store_call_number, real_write_contract_date, applicant_name, main_idx){
         return new Promise (function(response, reject){
-            let real_write_contract_date_value = (real_write_contract_date=="" ? null:real_write_contract_date);
-            let applicant_name_value = (applicant_name=="" ? null:applicant_name);
             let applicant_store_value = (applicant_store=="" ? null:applicant_store);
             let applicant_sales_man_name_value = (applicant_sales_man_name=="" ? null:applicant_sales_man_name);
             let applicant_store_call_number_value = (applicant_store_call_number=="" ? null:applicant_store_call_number);
+            let real_write_contract_date_value = (real_write_contract_date=="" ? null:real_write_contract_date);
+            let applicant_name_value = (applicant_name=="" ? null:applicant_name);
 
-            let sql = 'INSERT INTO `'+process.env.MYSQL_DATABASE+'`.`applicant_detail`(`real_write_contract_date`,`applicant_name`,`applicant_store`,`applicant_sales_man_name`,`applicant_store_call_number`,`main_idx`) ';
-            sql = sql + 'VALUES(?, ?, ?, ?, ?,"'+main_idx+'")';
-            let params = [real_write_contract_date_value, applicant_name_value, applicant_store_value, applicant_sales_man_name_value, applicant_store_call_number_value];
+            let sql = 'INSERT INTO `'+process.env.MYSQL_DATABASE+'`.`applicant_detail`(`applicant_store`,`applicant_sales_man_name`,`applicant_store_call_number`,`real_write_contract_date`,`applicant_name`,`main_idx`) ';
+            sql = sql + 'VALUES(?, ?, ?, ?, ?, ?)';
+            let params = [applicant_store_value, applicant_sales_man_name_value, applicant_store_call_number_value, real_write_contract_date_value, applicant_name_value, main_idx];
             mysqlConn.query(sql, params, function(err, data){
                 if(!err){
                     response('OK');

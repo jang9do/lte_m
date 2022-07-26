@@ -4,7 +4,6 @@ const mysql_updel_query = require("../models/mysql_updel_query.js");
 const permission_chk = require("../models/permission_chk.js");
 require('dotenv').config();
 const crypto = require('crypto');
-const { render } = require("ejs");
 const server_url = process.env.SERVER_HOST+":"+process.env.SERVER_PORT;
 
 // 암호화 메서드
@@ -36,9 +35,10 @@ module.exports = {
             res.redirect(server_url+login_chk);
             return;
         }
-        res.render("../views/contract/form_insert_lte_contract.ejs", {server_url: server_url, page_name: 'form_insert_lte_contract', user_rank: req.session.user_rank, user_id: req.session.user_id});
+        res.render("contract/form_insert_lte_contract", {server_url: server_url, page_name: 'form_insert_lte_contract', user_rank: req.session.user_rank, user_id: req.session.user_id});
     },
 
+    /*
     insert_lte_contract : async function(req, res){
         // login_chk
         let login_chk = permission_chk.login_check(req);
@@ -148,11 +148,88 @@ module.exports = {
             await mysql_select_query.rollback_transaction();
 
             console.log(err);
-            let result = err;
+            res.redirect(server_url+"/form_insert_lte_contract");
+        }
+    },
+    */
+
+    insert_lte_contract : async function(req, res){
+        // login_chk
+        let login_chk = permission_chk.login_check(req);
+        if(login_chk != true){
+            res.redirect(server_url+login_chk);
+            return;
+        }
+
+        let get_idx = Number(await mysql_select_query.select_table_get_last_idx("contract"))+1;
+        let attached_file_flag = (await mysql_select_query.select_attach_file_chk(get_idx));
+        let post = req.body;
+        let user_id = req.session.user_id;
+
+        //insert_and_update_db
+        try{
+            await mysql_select_query.start_transaction();
+
+            let basic_information_result = (await mysql_insert_query.insert_contract_basic_information(post.contact_variation, post.connect_variation, post.customer_variation, post.agreement_period, get_idx));
+            if(basic_information_result=='OK'){
+                console.log('basic_information_result_OK');
+            }
+
+            let monthly_price_result = (await mysql_insert_query.insert_contract_monthly_price(post.table_second_startPrice, post.table_second_supportPrice, post.table_second_installments_origin, post.table_second_installments_period, post.table_second_monthly_installments, post.table_second_installments_commission, post.table_second_monthlyPrice, post.table_second_monthlyDiscount, post.table_second_monthlyPayments, post.table_second_total_monthlyPrice, get_idx));
+            if(monthly_price_result=='OK'){
+                console.log('monthly_price_OK');
+            }
+
+            let customer_detail_result = (await mysql_insert_query.insert_contract_customer_detail(post.customer_name, post.customer_phone_num, post.customer_birth, post.customer_gender, post.customer_company_num, post.bill_variation_message, post.customer_mail, post.customer_address, get_idx));
+            if(customer_detail_result=='OK'){
+                console.log('customer_detail_OK');
+            }
+
+            let get_encryption_key = (await mysql_select_query.select_get_encryption_key("payment_detail","wallet_num"));
+            let payment_detail_result = (await mysql_insert_query.insert_contract_payment_detail(post.payer_name, post.payer_relation, post.other_peaple_payment_chk, post.consenter, post.payer_birth, post.payments_method, post.payment_finance_name, (await cipher(post.payment_finance_num,get_encryption_key.en_key,get_encryption_key.en_iv)), post.customer_agree_chk, get_idx));
+            if(payment_detail_result=='OK'){
+                console.log('payment_detail_OK');
+            }
+
+            let service_detail_result = (await mysql_insert_query.insert_contract_service_detail(post.single_model_name, post.totla_line_cnt, post.terminal_info, post.USIM_price, post.USIM_model_name, post.USIM_num, post.join_service_variation, post.extra_service, get_idx));
+            if(service_detail_result=='OK'){
+                console.log('service_detail_OK');
+            }
+
+            let ship_information_result = (await mysql_insert_query.insert_contract_ship_information(post.ship_name, post.ship_num, post.total_weight, post.port_of_shipment, post.ship_type, post.ship_navigation_area, get_idx));
+            if(ship_information_result=='OK'){
+                console.log('ship_information_OK');
+            }
+
+            let applicant_detail_result = (await mysql_insert_query.insert_contract_applicant_detail(post.sales_store_name, post.sales_people_name, post.applicant_store_call_number, post.real_write_contract_date, post.applicant_name, get_idx));
+            if(applicant_detail_result=='OK'){
+                console.log('applicant_detail_OK');
+            }
+
+
+            //get_idx
+            let auto_complete_list_idx = post.auto_complete_rate;
+            let basic_information_idx = (await mysql_select_query.select_table_get_last_idx('basic_information'));
+            let monthly_price_idx = (await mysql_select_query.select_table_get_last_idx('monthly_price'));
+            let customer_detail_idx = (await mysql_select_query.select_table_get_last_idx('customer_detail'));
+            let payment_detail_idx = (await mysql_select_query.select_table_get_last_idx('payment_detail'));
+            let service_detail_idx = (await mysql_select_query.select_table_get_last_idx('service_detail'));
+            let ship_information_idx = (await mysql_select_query.select_table_get_last_idx('ship_information'));
+            let applicant_detail_idx = (await mysql_select_query.select_table_get_last_idx('applicant_detail'));
+
+            let result = (await mysql_insert_query.insert_contract_main(auto_complete_list_idx, basic_information_idx, monthly_price_idx, customer_detail_idx, payment_detail_idx, service_detail_idx, ship_information_idx, applicant_detail_idx, attached_file_flag, user_id));
+            await mysql_select_query.commit_transaction();
+
+            res.redirect(server_url+"/lte_contract_list");
+        } catch(err) {
+            await mysql_select_query.rollback_transaction();
+
+            console.log(err);
             res.redirect(server_url+"/form_insert_lte_contract");
         }
     },
 
+    
     update_lte_contract : async function(req, res){
         // login_chk
         let login_chk = permission_chk.login_check(req);
@@ -175,33 +252,6 @@ module.exports = {
             return;
         }
 
-        console.log(post.main_idx);
-
-        let bill_type_string = "";
-
-        if(post.bill_variation_mail=="ok"){
-            bill_type_string = "\'mail\'";
-        }
-        if(post.bill_variation_message=="ok"){
-            if(bill_type_string != ""){
-                bill_type_string = bill_type_string + ",";
-            }
-            bill_type_string = bill_type_string+"\'message\'";
-        }
-        if(post.bill_variation_alram=="ok"){
-            if(bill_type_string != ""){
-                bill_type_string = bill_type_string + ",";
-            }
-            bill_type_string = bill_type_string+"\'alram\'";
-        }
-        if(post.bill_variation_post=="ok"){
-            if(bill_type_string != ""){
-                bill_type_string = bill_type_string + ",";
-            }
-            bill_type_string = bill_type_string+"\'post\'";
-        }
-
-
         //update_db
         try{
             await mysql_select_query.start_transaction();
@@ -209,14 +259,12 @@ module.exports = {
             await mysql_insert_query.insert_contract_log_main(
                 get_idx, 
                 contract_idx_list.auto_complete_list_idx,
-                contract_idx_list.c_network_idx, 
-                contract_idx_list.terminal_purchase_idx, 
-                contract_idx_list.c_line_usePrice_idx, 
+                contract_idx_list.basic_information_idx, 
                 contract_idx_list.monthly_price_idx, 
                 contract_idx_list.customer_detail_idx, 
                 contract_idx_list.payment_detail_idx, 
                 contract_idx_list.service_detail_idx, 
-                contract_idx_list.other_information_idx, 
+                contract_idx_list.ship_information_idx, 
                 contract_idx_list.applicant_detail_idx, 
                 contract_idx_list.attached_file_flag, 
                 post.before_attached_file_idx_list, 
@@ -236,48 +284,38 @@ module.exports = {
             await mysql_updel_query.lte_contract_tables_deleteRows("other_information",contract_idx_list.other_information_idx,0);
             */
 
-            let c_network_result = (await mysql_insert_query.insert_contract_c_network(post.tel_comp, post.contact_variation, post.work_variation, post.connect_variation, post.customer_variation, post.visit_costomer, get_idx));
-            if(c_network_result=='OK'){
-                console.log('c_network_OK');
+            let basic_information_result = (await mysql_insert_query.insert_contract_basic_information(post.contact_variation, post.connect_variation, post.customer_variation, post.agreement_period, get_idx));
+            if(basic_information_result=='OK'){
+                console.log('basic_information_result_OK');
             }
 
-            let terminal_purchase_result = (await mysql_insert_query.insert_contract_Terminal_purchase(post.installments, post.table_second_startPrice, post.table_second_supportPrice, post.table_second_supportPrice_money, post.table_second_installments_origin, post.table_second_unpairPrice, get_idx));
-            if(terminal_purchase_result=='OK'){
-                console.log('terminal_purchase_OK');
-            }
-
-            let c_line_useprice_result = (await mysql_insert_query.insert_contract_c_line_useprice(post.line_use_price, post.table_second_price_model_name, post.table_second_nomalPrice, post.table_second_discount_type, post.table_second_discount, post.table_second_monthPrice, post.table_second_contactPeriod, get_idx));
-            if(c_line_useprice_result=='OK'){
-                console.log('c_line_useprice_OK');
-            }
-
-            let monthly_price_result = (await mysql_insert_query.insert_contract_monthly_price(post.month_price, post.table_second_terminal_price, post.table_second_comuPrice, post.table_second_addPrice, post.table_second_totalPrice, post.table_second_plusSupportPrice, post.table_second_total_monthlyPrice, get_idx));
+            let monthly_price_result = (await mysql_insert_query.insert_contract_monthly_price(post.table_second_startPrice, post.table_second_supportPrice, post.table_second_installments_origin, post.table_second_installments_period, post.table_second_monthly_installments, post.table_second_installments_commission, post.table_second_monthlyPrice, post.table_second_monthlyDiscount, post.table_second_monthlyPayments, post.table_second_total_monthlyPrice, get_idx));
             if(monthly_price_result=='OK'){
                 console.log('monthly_price_OK');
             }
 
-            let customer_detail_result = (await mysql_insert_query.insert_contract_customer_detail(post.customer_name, post.customer_birth, post.customer_gender, post.customer_phone_num, post.customer_company_num, post.customer_mail, post.customer_address, bill_type_string, get_idx));
+            let customer_detail_result = (await mysql_insert_query.insert_contract_customer_detail(post.customer_name, post.customer_phone_num, post.customer_birth, post.customer_gender, post.customer_company_num, post.bill_variation_message, post.customer_mail, post.customer_address, get_idx));
             if(customer_detail_result=='OK'){
                 console.log('customer_detail_OK');
             }
 
             let get_encryption_key = (await mysql_select_query.select_get_encryption_key("payment_detail","wallet_num"));
-            let payment_detail_result = (await mysql_insert_query.insert_contract_payment_detail(post.auto_payment_chk, post.auto_payment, post.auto_payment_finance_name, (await cipher(post.auto_payment_finance_num,get_encryption_key.en_key,get_encryption_key.en_iv)), post.finance_master_birth, post.finance_master_name, post.finance_master_valid, post.finance_master_relation, post.auto_payment_other_peaple_chk, post.request_name, get_idx));
+            let payment_detail_result = (await mysql_insert_query.insert_contract_payment_detail(post.payer_name, post.payer_relation, post.other_peaple_payment_chk, post.consenter, post.payer_birth, post.payments_method, post.payment_finance_name, (await cipher(post.payment_finance_num,get_encryption_key.en_key,get_encryption_key.en_iv)), post.customer_agree_chk, get_idx));
             if(payment_detail_result=='OK'){
                 console.log('payment_detail_OK');
             }
 
-            let service_detail_result = (await mysql_insert_query.insert_contract_service_detail(post.join_service_variation, post.fifth_table_monthly_price, post.join_price, post.join_price_variation, post.single_model_name, post.terminal_num_or_IMEI, post.USIM_model_name, post.USIM_num, post.USIM_price, post.USIM_price_variation, post.join_phone_num, get_idx));
+            let service_detail_result = (await mysql_insert_query.insert_contract_service_detail(post.single_model_name, post.totla_line_cnt, post.terminal_info, post.USIM_price, post.USIM_model_name, post.USIM_num, post.join_service_variation, post.extra_service, get_idx));
             if(service_detail_result=='OK'){
                 console.log('service_detail_OK');
             }
 
-            let other_information_result = (await mysql_insert_query.insert_contract_other_information(post.sales_people_name, post.sales_store_name, post.ship_num, post.ship_name, post.other_input_text, get_idx));
-            if(other_information_result=='OK'){
-                console.log('other_information_OK');
+            let ship_information_result = (await mysql_insert_query.insert_contract_ship_information(post.ship_name, post.ship_num, post.total_weight, post.port_of_shipment, post.ship_type, post.ship_navigation_area, get_idx));
+            if(ship_information_result=='OK'){
+                console.log('ship_information_OK');
             }
 
-            let applicant_detail_result = (await mysql_insert_query.insert_contract_applicant_detail(post.real_write_contract_date, post.applicant_name, post.applicant_store, post.applicant_sales_man_name, post.applicant_store_call_number, get_idx));
+            let applicant_detail_result = (await mysql_insert_query.insert_contract_applicant_detail(post.sales_store_name, post.sales_people_name, post.applicant_store_call_number, post.real_write_contract_date, post.applicant_name, get_idx));
             if(applicant_detail_result=='OK'){
                 console.log('applicant_detail_OK');
             }
@@ -285,17 +323,15 @@ module.exports = {
 
             //get_idx
             let auto_complete_list_idx = post.auto_complete_rate;
-            let c_network_idx = (await mysql_select_query.select_table_get_last_idx('c_network'));
-            let terminal_purchase_idx = (await mysql_select_query.select_table_get_last_idx('terminal_purchase'));
-            let c_line_useprice_idx = (await mysql_select_query.select_table_get_last_idx('c_line_useprice'));
+            let basic_information_idx = (await mysql_select_query.select_table_get_last_idx('basic_information'));
             let monthly_price_idx = (await mysql_select_query.select_table_get_last_idx('monthly_price'));
             let customer_detail_idx = (await mysql_select_query.select_table_get_last_idx('customer_detail'));
             let payment_detail_idx = (await mysql_select_query.select_table_get_last_idx('payment_detail'));
             let service_detail_idx = (await mysql_select_query.select_table_get_last_idx('service_detail'));
-            let other_information_idx = (await mysql_select_query.select_table_get_last_idx('other_information'));
+            let ship_information_idx = (await mysql_select_query.select_table_get_last_idx('ship_information'));
             let applicant_detail_idx = (await mysql_select_query.select_table_get_last_idx('applicant_detail'));
 
-            await mysql_updel_query.update_contract_main(auto_complete_list_idx, c_network_idx, terminal_purchase_idx, c_line_useprice_idx, monthly_price_idx, customer_detail_idx, payment_detail_idx, service_detail_idx, other_information_idx, applicant_detail_idx, attached_file_flag, contract_idx_list.create_user, user_id, get_idx);
+            await mysql_updel_query.update_contract_main(auto_complete_list_idx, basic_information_idx, monthly_price_idx, customer_detail_idx, payment_detail_idx, service_detail_idx, ship_information_idx, applicant_detail_idx, attached_file_flag, contract_idx_list.create_user, user_id, get_idx);
             await mysql_select_query.commit_transaction();
 
             console.log(server_url);
@@ -315,7 +351,7 @@ module.exports = {
             res.redirect(server_url+login_chk);
             return;
         }
-        res.render("../views/contract/lte_contract_list.ejs", {server_url: server_url, page_name: 'lte_contract_list', user_rank: req.session.user_rank, user_id: req.session.user_id});
+        res.render("contract/lte_contract_list", {server_url: server_url, page_name: 'lte_contract_list', user_rank: req.session.user_rank, user_id: req.session.user_id});
     },
 
     form_show_lte_contract: async function(req, res){
@@ -344,31 +380,34 @@ module.exports = {
 
             let get_encryption_key = (await mysql_select_query.select_get_encryption_key("payment_detail","wallet_num"));
 
-            let c_network_data = await mysql_select_query.select_c_network_detail(contract_idx_list.c_network_idx);
-            let terminal_purchase_data = await mysql_select_query.select_terminal_purchase_detail(contract_idx_list.terminal_purchase_idx);
-            let c_line_usePrice_data = await mysql_select_query.select_c_line_usePrice_detail(contract_idx_list.c_line_usePrice_idx);
+            let auto_complete_value_data = [];
+            if(contract_idx_list.auto_complete_list_idx == 0 || contract_idx_list.auto_complete_list_idx == null){
+                auto_complete_value_data.push({"list_name":"선택하지 않음"});
+            } else {
+                auto_complete_value_data = await mysql_select_query.select_auto_complete_value(contract_idx_list.auto_complete_list_idx);
+            }
+            let basic_information_data = await mysql_select_query.select_basic_information_detail(contract_idx_list.basic_information_idx);
             let monthly_price_data = await mysql_select_query.select_monthly_price_detail(contract_idx_list.monthly_price_idx);
             let customer_detail_data = await mysql_select_query.select_customer_detail_detail(contract_idx_list.customer_detail_idx);
             let payment_detail_data = await mysql_select_query.select_payment_detail_detail(contract_idx_list.payment_detail_idx);
             payment_detail_data[0].wallet_num = await decipher(payment_detail_data[0].wallet_num, get_encryption_key.en_key, get_encryption_key.en_iv);
             let service_detail_data = await mysql_select_query.select_service_detail_detail(contract_idx_list.service_detail_idx);
-            let other_information_data = await mysql_select_query.select_other_information_detail(contract_idx_list.other_information_idx);
+            let ship_information_data = await mysql_select_query.select_ship_information_detail(contract_idx_list.ship_information_idx);
             let applicant_detail_data = await mysql_select_query.select_applicant_detail_detail(contract_idx_list.applicant_detail_idx);
             let attached_file_data = await mysql_select_query.select_attached_file_detail(main_idx);
 
-            res.render("../views/contract/form_show_lte_contract.ejs", {
+            res.render("contract/form_show_lte_contract", {
                 server_url: server_url, 
                 page_name: 'form_show_lte_contract', 
                 contract_idx_list: contract_idx_list,
                 main_idx: main_idx, 
-                c_network_data: c_network_data, 
-                terminal_purchase_data: terminal_purchase_data,
-                c_line_usePrice_data: c_line_usePrice_data,
+                auto_complete_value_data: auto_complete_value_data, 
+                basic_information_data: basic_information_data, 
                 monthly_price_data: monthly_price_data,
                 customer_detail_data: customer_detail_data,
                 payment_detail_data: payment_detail_data,
                 service_detail_data: service_detail_data,
-                other_information_data: other_information_data,
+                ship_information_data: ship_information_data,
                 applicant_detail_data: applicant_detail_data,
                 attached_file_data: attached_file_data,
                 user_id: req.session.user_id,
@@ -408,31 +447,34 @@ module.exports = {
 
             let get_encryption_key = (await mysql_select_query.select_get_encryption_key("payment_detail","wallet_num"));
 
-            let c_network_data = await mysql_select_query.select_c_network_detail(contract_before_idx_list.c_network_idx);
-            let terminal_purchase_data = await mysql_select_query.select_terminal_purchase_detail(contract_before_idx_list.terminal_purchase_idx);
-            let c_line_usePrice_data = await mysql_select_query.select_c_line_usePrice_detail(contract_before_idx_list.c_line_usePrice_idx);
+            let auto_complete_value_data = [];
+            if(contract_before_idx_list.auto_complete_list_idx == 0 || contract_before_idx_list.auto_complete_list_idx == null){
+                auto_complete_value_data.push({"list_name":"선택하지 않음"});
+            } else {
+                auto_complete_value_data = await mysql_select_query.select_auto_complete_value(contract_idx_list.auto_complete_list_idx);
+            }
+            let basic_information_data = await mysql_select_query.select_basic_information_detail(contract_before_idx_list.basic_information_idx);
             let monthly_price_data = await mysql_select_query.select_monthly_price_detail(contract_before_idx_list.monthly_price_idx);
             let customer_detail_data = await mysql_select_query.select_customer_detail_detail(contract_before_idx_list.customer_detail_idx);
             let payment_detail_data = await mysql_select_query.select_payment_detail_detail(contract_before_idx_list.payment_detail_idx);
             payment_detail_data[0].wallet_num = await decipher(payment_detail_data[0].wallet_num, get_encryption_key.en_key, get_encryption_key.en_iv);
             let service_detail_data = await mysql_select_query.select_service_detail_detail(contract_before_idx_list.service_detail_idx);
-            let other_information_data = await mysql_select_query.select_other_information_detail(contract_before_idx_list.other_information_idx);
+            let ship_information_data = await mysql_select_query.select_ship_information_detail(contract_before_idx_list.ship_information_idx);
             let applicant_detail_data = await mysql_select_query.select_applicant_detail_detail(contract_before_idx_list.applicant_detail_idx);
             let attached_file_data = await mysql_select_query.select_before_attached_file_detail(contract_before_idx_list.attached_file_idx_list);
 
-            res.render("../views/contract/form_show_before_lte_contract.ejs", {
+            res.render("contract/form_show_before_lte_contract", {
                 server_url: server_url, 
                 page_name: 'form_show_before_lte_contract', 
                 contract_before_idx_list: contract_before_idx_list,
                 main_idx: main_idx, 
-                c_network_data: c_network_data, 
-                terminal_purchase_data: terminal_purchase_data,
-                c_line_usePrice_data: c_line_usePrice_data,
+                auto_complete_value_data: auto_complete_value_data,
+                basic_information_data: basic_information_data, 
                 monthly_price_data: monthly_price_data,
                 customer_detail_data: customer_detail_data,
                 payment_detail_data: payment_detail_data,
                 service_detail_data: service_detail_data,
-                other_information_data: other_information_data,
+                ship_information_data: ship_information_data,
                 applicant_detail_data: applicant_detail_data,
                 attached_file_data: attached_file_data,
                 user_id: req.session.user_id,
@@ -470,31 +512,37 @@ module.exports = {
 
             let get_encryption_key = (await mysql_select_query.select_get_encryption_key("payment_detail","wallet_num"));
 
-            let c_network_data = await mysql_select_query.select_c_network_detail(contract_idx_list.c_network_idx);
-            let terminal_purchase_data = await mysql_select_query.select_terminal_purchase_detail(contract_idx_list.terminal_purchase_idx);
-            let c_line_usePrice_data = await mysql_select_query.select_c_line_usePrice_detail(contract_idx_list.c_line_usePrice_idx);
+            let auto_complete_value_data;
+            if(contract_idx_list.auto_complete_list_idx == 0 || contract_idx_list.auto_complete_list_idx == null){
+                auto_complete_value_data = [];
+                auto_complete_value_data.push({"idx":"0"});
+                auto_complete_value_data.push({"list_name":"선택하지 않음"});
+            } else {
+                auto_complete_value_data = await mysql_select_query.select_auto_complete_value(contract_idx_list.auto_complete_list_idx);
+            }
+
+            let basic_information_data = await mysql_select_query.select_basic_information_detail(contract_idx_list.basic_information_idx);
             let monthly_price_data = await mysql_select_query.select_monthly_price_detail(contract_idx_list.monthly_price_idx);
             let customer_detail_data = await mysql_select_query.select_customer_detail_detail(contract_idx_list.customer_detail_idx);
             let payment_detail_data = await mysql_select_query.select_payment_detail_detail(contract_idx_list.payment_detail_idx);
             payment_detail_data[0].wallet_num = await decipher(payment_detail_data[0].wallet_num, get_encryption_key.en_key, get_encryption_key.en_iv);
             let service_detail_data = await mysql_select_query.select_service_detail_detail(contract_idx_list.service_detail_idx);
-            let other_information_data = await mysql_select_query.select_other_information_detail(contract_idx_list.other_information_idx);
+            let ship_information_data = await mysql_select_query.select_ship_information_detail(contract_idx_list.ship_information_idx);
             let applicant_detail_data = await mysql_select_query.select_applicant_detail_detail(contract_idx_list.applicant_detail_idx);
             let attached_file_data = await mysql_select_query.select_attached_file_detail(main_idx);
 
-            res.render("../views/contract/form_modify_lte_contract.ejs", {
+            res.render("contract/form_modify_lte_contract", {
                 server_url: server_url, 
                 page_name: 'form_modify_lte_contract', 
                 main_idx: main_idx, 
+                auto_complete_value_data: auto_complete_value_data,
                 contract_idx_list: contract_idx_list,
-                c_network_data: c_network_data, 
-                terminal_purchase_data: terminal_purchase_data,
-                c_line_usePrice_data: c_line_usePrice_data,
+                basic_information_data: basic_information_data, 
                 monthly_price_data: monthly_price_data,
                 customer_detail_data: customer_detail_data,
                 payment_detail_data: payment_detail_data,
                 service_detail_data: service_detail_data,
-                other_information_data: other_information_data,
+                ship_information_data: ship_information_data    ,
                 applicant_detail_data: applicant_detail_data,
                 attached_file_data: attached_file_data,
                 user_id: req.session.user_id,
@@ -502,7 +550,7 @@ module.exports = {
             });
         } catch(err){
             console.log(err);
-            res.render("../views/contract/form_modify_lte_contract.ejs", {server_url: server_url, page_name: 'form_modify_lte_contract', user_rank: req.session.user_rank, user_id: req.session.user_id});
+            res.render("contract/form_modify_lte_contract", {server_url: server_url, page_name: 'form_modify_lte_contract', user_rank: req.session.user_rank, user_id: req.session.user_id});
         }
     },
 
