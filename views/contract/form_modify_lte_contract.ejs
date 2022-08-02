@@ -38,7 +38,7 @@
             <tr>
               <th>계약구분</th>
               <td>
-                <span><input type="radio" name="contact_variation" id="contact_variation_first" value="최초"  />&nbsp;<label for="contact_variation_first">최초</label></span>
+                <span><input type="radio" name="contact_variation" id="contact_variation_first" value="신규"  />&nbsp;<label for="contact_variation_first">신규</label></span>
               </td>
             </tr>
             <tr>
@@ -316,7 +316,7 @@
                 <th rowspan="2"><input type="checkbox" name="new_upload_chk" id="new_upload_chk" /><label for="new_upload_chk">첨부파일</label></th>
                 <td>
                   <% attached_file_data.forEach(function(row) { %>
-                    <a href="<%= row.file_dir %>/<%= row.file_name %>" style="color:cornflowerblue;" ><%= row.file_name %>&emsp;&emsp;&emsp;&emsp;&emsp;<%= row.file_size %> MB</a><br>
+                    <a href="<%=server_url %>/download_contract_attach_file?file_name=<%= row.file_name %>" style="color:cornflowerblue;" ><%= row.file_name %>&emsp;&emsp;&emsp;&emsp;&emsp;<%= row.file_size %> MB</a><br>
                   <% }) %>
                   <% if(attached_file_data.length<1){%>
                     <span>첨부없음</span>
